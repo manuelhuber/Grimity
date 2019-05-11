@@ -1,8 +1,7 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 
-namespace Grimity.Extensions
+namespace Grimity.Collections
 {
     public static class CollectionExtensions
     {
