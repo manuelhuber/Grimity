@@ -1,16 +1,18 @@
 using Grimity.Loops;
+using Terrain.Generation;
+using Unity.Collections;
 using UnityEngine;
 
 namespace Grimity.Mesh {
 public class MeshGenerator {
-    public static UnityEngine.Mesh GenerateMesh(int height,
-                                                int width,
-                                                float[,] heightMap,
-                                                float heightAmplifier,
-                                                AnimationCurve heightCurve,
-                                                int levelOfDetail = 0,
-                                                float distanceBetweenVertices = 1f) {
+    public static MeshData GenerateMesh(float[,] heightMap,
+                                        float heightAmplifier,
+                                        AnimationCurve heightCurve,
+                                        int levelOfDetail = 0,
+                                        float distanceBetweenVertices = 1f) {
         var increment = levelOfDetail == 0 ? 1 : levelOfDetail * 2;
+        var width = heightMap.GetLength(0);
+        var height = heightMap.GetLength(1);
 
         var widthVerticesCount = (width - 1) / increment + 1;
         var heightVerticesCount = (height - 1) / increment + 1;
@@ -52,8 +54,11 @@ public class MeshGenerator {
         });
 
 
-        var mesh = new UnityEngine.Mesh {vertices = vertices, triangles = triangles, uv = uvs};
-        mesh.RecalculateNormals();
+        var mesh = new MeshData {
+            Vertices = new NativeArray<Vector3>(vertices, Allocator.Temp),
+            Triangles = new NativeArray<int>(triangles, Allocator.Temp),
+            Uvs = new NativeArray<Vector2>(uvs, Allocator.Temp)
+        };
         return mesh;
     }
 }

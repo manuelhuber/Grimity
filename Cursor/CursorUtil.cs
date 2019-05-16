@@ -9,7 +9,7 @@ public class CursorUtil {
     public static bool GetCursorLocation(out RaycastHit hit,
                                          int layerMask,
                                          Camera camera,
-                                         int maxDistance = 100) {
+                                         int maxDistance = 10000) {
         var ray = camera.ScreenPointToRay(Input.mousePosition);
         return Physics.Raycast(ray, out hit, maxDistance, layerMask);
     }
