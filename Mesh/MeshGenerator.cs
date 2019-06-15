@@ -1,6 +1,5 @@
+using System;
 using Grimity.Loops;
-using Terrain.Generation;
-using Unity.Collections;
 using UnityEngine;
 
 namespace Grimity.Mesh {
@@ -9,7 +8,8 @@ public class MeshGenerator {
                                         float heightAmplifier,
                                         AnimationCurve heightCurve,
                                         int levelOfDetail = 0,
-                                        float distanceBetweenVertices = 1f) {
+                                        // Distance between vertices
+                                        float scale = 1f) {
         var increment = levelOfDetail == 0 ? 1 : levelOfDetail * 2;
         var width = heightMap.GetLength(0);
         var height = heightMap.GetLength(1);
@@ -24,17 +24,10 @@ public class MeshGenerator {
 
         new Loop2D(width, height, i => i + increment).loopY((x, y) => {
             var elevation = heightCurve.Evaluate(heightMap[x, y]) * heightAmplifier;
-            vertices[index] = new Vector3(x * distanceBetweenVertices, elevation, y * distanceBetweenVertices);
+            vertices[index] = new Vector3(x * scale, elevation, y * scale);
             uvs[index] = new Vector2(x / (float) width, y / (float) height);
             index++;
         });
-
-        /**
-         *
-         * 0-2-4-6
-         * 
-         * C-C-C-CA-A-A-AB-B-B-B
-         */
 
         // TRIANGLES ------------
         var triangles = new int[3 * 2 * (widthVerticesCount - 1) * (heightVerticesCount - 1)];
@@ -55,10 +48,23 @@ public class MeshGenerator {
 
 
         var mesh = new MeshData {
-            Vertices = new NativeArray<Vector3>(vertices, Allocator.Temp),
-            Triangles = new NativeArray<int>(triangles, Allocator.Temp),
-            Uvs = new NativeArray<Vector2>(uvs, Allocator.Temp)
+            Vertices = vertices,
+            Triangles = triangles,
+            Uvs = uvs,
         };
+        return mesh;
+    }
+}
+
+[Serializable]
+public struct MeshData {
+    public Vector3[] Vertices;
+    public Vector2[] Uvs;
+    public int[] Triangles;
+
+    public UnityEngine.Mesh generateMesh() {
+        var mesh = new UnityEngine.Mesh {vertices = Vertices, triangles = Triangles, uv = Uvs};
+        mesh.RecalculateNormals();
         return mesh;
     }
 }

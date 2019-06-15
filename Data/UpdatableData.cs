@@ -7,6 +7,10 @@ public class UpdatableData : ScriptableObject {
     public event Action OnValuesUpdated;
     public bool autoUpdate;
 
+    public void Clear() {
+        OnValuesUpdated = null;
+    }
+
 #if UNITY_EDITOR
 
     protected virtual void OnValidate() {
