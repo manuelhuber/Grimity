@@ -9,8 +9,10 @@ public class CursorUtil {
     public static bool GetCursorLocation(out RaycastHit hit,
                                          int layerMask,
                                          Camera camera,
-                                         int maxDistance = 10000) {
+                                         int maxDistance = 10000,
+                                         bool debug = false) {
         var ray = camera.ScreenPointToRay(Input.mousePosition);
+        if (debug) Debug.DrawRay(camera.transform.position, ray.direction * 1000, Color.red);
         return Physics.Raycast(ray, out hit, maxDistance, layerMask);
     }
 
