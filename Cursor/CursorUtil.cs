@@ -7,8 +7,8 @@ public class CursorUtil {
     /// </summary>
     /// <returns>true if terrain has been hit</returns>
     public static bool GetCursorLocation(out RaycastHit hit,
-                                         int layerMask,
                                          Camera camera,
+                                         int layerMask = -5,
                                          int maxDistance = 10000,
                                          bool debug = false) {
         var ray = camera.ScreenPointToRay(Input.mousePosition);
@@ -19,7 +19,7 @@ public class CursorUtil {
     public static bool GetCursorLocation(out Vector3 hit,
                                          int layerMask,
                                          Camera camera) {
-        var boo = GetCursorLocation(out RaycastHit rayHit, layerMask, camera);
+        var boo = GetCursorLocation(out var rayHit, camera, layerMask);
         hit = rayHit.point;
         return boo;
     }
@@ -27,7 +27,7 @@ public class CursorUtil {
     public static bool GetCursorLocation(out GameObject hit,
                                          int layerMask,
                                          Camera camera) {
-        var boo = GetCursorLocation(out RaycastHit rayHit, layerMask, camera);
+        var boo = GetCursorLocation(out var rayHit, camera, layerMask);
         hit = rayHit.transform.gameObject;
         return boo;
     }

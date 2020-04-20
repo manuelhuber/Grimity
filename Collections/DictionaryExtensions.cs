@@ -3,12 +3,15 @@ using System.Collections.Generic;
 
 namespace Grimity.Collections {
 public static class DictionaryExtensions {
-    public static V GetOrCompute<K, V>(this Dictionary<K, V> dict, K key, Func<K, V> compute) {
-        if (!dict.TryGetValue(key, out var value)) {
-            value = compute(key);
-            dict.Add(key, value);
-        }
+    public static TV GetOrCompute<TK, TV>(this Dictionary<TK, TV> dict, TK key, Func<TK, TV> compute) {
+        if (dict.TryGetValue(key, out var value)) return value;
+        value = compute(key);
+        dict.Add(key, value);
         return value;
+    }
+
+    public static TV GetOrDefault<TK, TV>(this Dictionary<TK, TV> dict, TK key, TV fallback) {
+        return !dict.TryGetValue(key, out var value) ? fallback : value;
     }
 }
 }
