@@ -1,9 +1,8 @@
 using System;
 using UnityEditor;
-using UnityEngine;
 
 namespace Grimity.Data {
-public class UpdatableData : ScriptableObject {
+public class UpdatableData : UnityEngine.ScriptableObject {
     public event Action OnValuesUpdated;
     public bool autoUpdate;
 
