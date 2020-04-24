@@ -1,10 +1,9 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Grimity.Actions {
 public class IntervaledAction : MonoBehaviour {
-    public Action action;
+    public Func<bool> action;
     public float interval;
     public bool initialDelay;
 
@@ -26,8 +25,9 @@ public class IntervaledAction : MonoBehaviour {
     private void Update() {
         if (!IsRunning) return;
         if (!(Time.time >= _nextExecution)) return;
-        _nextExecution = Time.time + interval;
-        action.Invoke();
+        if (action.Invoke()) {
+            _nextExecution = Time.time + interval;
+        }
     }
 }
 }
