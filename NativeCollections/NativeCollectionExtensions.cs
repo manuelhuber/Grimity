@@ -110,7 +110,8 @@ public static class NativeCollectionExtensions {
         int elemSize = UnsafeUtility.SizeOf<T>();
         byte* basePtr = (byte*) list.GetUnsafePtr();
 
-        UnsafeUtility.MemMove(basePtr + (index * elemSize), basePtr + ((index + count) * elemSize),
+        UnsafeUtility.MemMove(basePtr + (index * elemSize),
+            basePtr + ((index + count) * elemSize),
             elemSize * (list.Length - count - index));
 
         // No easy way to change length so we just loop this unfortunately.
@@ -150,6 +151,14 @@ public static class NativeCollectionExtensions {
                 buffer[i] = -1;
             }
 #endif
+    }
+
+    public static T Get2D<T>(this NativeArray<T> arr, int row, int column, int rowLength) where T : struct {
+        return arr[column + rowLength * row];
+    }
+
+    public static void Put2D<T>(this NativeArray<T> arr, T item, int row, int column, int rowLength) where T : struct {
+        arr[column + rowLength * row] = item;
     }
 }
 }
