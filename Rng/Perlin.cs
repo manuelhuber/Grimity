@@ -30,7 +30,7 @@ public class Perlin {
         }
 
         new Loop2D(width, height).loopY((x, y) => {
-            var normalizedHeight = (data[x, y]) / (maxPossibleHeight);
+            var normalizedHeight = data[x, y] / maxPossibleHeight;
             data[x, y] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
         });
 

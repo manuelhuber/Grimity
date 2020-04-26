@@ -50,7 +50,7 @@ public class MeshGenerator {
         var mesh = new MeshData {
             Vertices = vertices,
             Triangles = triangles,
-            Uvs = uvs,
+            Uvs = uvs
         };
         return mesh;
     }

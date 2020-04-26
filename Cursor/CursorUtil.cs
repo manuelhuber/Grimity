@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Grimity.Cursor {
 public class CursorUtil {
     /// <summary>
-    /// Casts a ray from the main camera through the cursor and outputs the first hit on the given layer mask
+    ///     Casts a ray from the main camera through the cursor and outputs the first hit on the given layer mask
     /// </summary>
     /// <returns>true if terrain has been hit</returns>
     public static bool GetCursorLocation(out RaycastHit hit,

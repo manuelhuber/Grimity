@@ -3,8 +3,8 @@ using UnityEditor;
 
 namespace Grimity.Data {
 public class UpdatableData : UnityEngine.ScriptableObject {
-    public event Action OnValuesUpdated;
     public bool autoUpdate;
+    public event Action OnValuesUpdated;
 
     public void Clear() {
         OnValuesUpdated = null;
@@ -13,16 +13,12 @@ public class UpdatableData : UnityEngine.ScriptableObject {
 #if UNITY_EDITOR
 
     protected virtual void OnValidate() {
-        if (autoUpdate) {
-            EditorApplication.update += NotifyOfUpdatedValues;
-        }
+        if (autoUpdate) EditorApplication.update += NotifyOfUpdatedValues;
     }
 
     public void NotifyOfUpdatedValues() {
         EditorApplication.update -= NotifyOfUpdatedValues;
-        if (OnValuesUpdated != null) {
-            OnValuesUpdated();
-        }
+        if (OnValuesUpdated != null) OnValuesUpdated();
     }
 
 #endif

@@ -7,9 +7,7 @@ public class EndlessTerrainGeneratorInspector : UnityEditor.Editor {
     public override void OnInspectorGUI() {
         var generator = (UpdatableData) target;
         base.OnInspectorGUI();
-        if (GUILayout.Button("Clear")) {
-            generator.Clear();
-        }
+        if (GUILayout.Button("Clear")) generator.Clear();
     }
 }
 }
