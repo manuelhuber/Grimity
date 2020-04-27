@@ -1,7 +1,8 @@
+using Grimity.Data;
 using UnityEditor;
 using UnityEngine;
 
-namespace Grimity.Data.Editor {
+namespace Grimity.ScriptableObject.Editor {
 [CustomEditor(typeof(UpdatableData), true)]
 public class EndlessTerrainGeneratorInspector : UnityEditor.Editor {
     public override void OnInspectorGUI() {
