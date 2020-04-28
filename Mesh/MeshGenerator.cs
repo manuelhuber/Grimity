@@ -22,7 +22,7 @@ public class MeshGenerator {
         var uvs = new Vector2[widthVerticesCount * heightVerticesCount];
         var index = 0;
 
-        new Loop2D(width, height, i => i + increment).loopY((x, y) => {
+        new Loop2D(width, height, i => i + increment).LoopY((x, y) => {
             var elevation = heightCurve.Evaluate(heightMap[x, y]) * heightAmplifier;
             vertices[index] = new Vector3(x * scale, elevation, y * scale);
             uvs[index] = new Vector2(x / (float) width, y / (float) height);
@@ -32,7 +32,7 @@ public class MeshGenerator {
         // TRIANGLES ------------
         var triangles = new int[3 * 2 * (widthVerticesCount - 1) * (heightVerticesCount - 1)];
         index = 0;
-        new Loop2D(widthVerticesCount - 1, heightVerticesCount - 1).loopX((x, y) => {
+        new Loop2D(widthVerticesCount - 1, heightVerticesCount - 1).LoopX((x, y) => {
             var topLeft = heightVerticesCount * x + y;
             var topRight = topLeft + 1;
             var bottomRight = topRight + heightVerticesCount;
@@ -48,9 +48,9 @@ public class MeshGenerator {
 
 
         var mesh = new MeshData {
-            Vertices = vertices,
-            Triangles = triangles,
-            Uvs = uvs
+            vertices = vertices,
+            triangles = triangles,
+            uvs = uvs
         };
         return mesh;
     }
@@ -58,12 +58,12 @@ public class MeshGenerator {
 
 [Serializable]
 public struct MeshData {
-    public Vector3[] Vertices;
-    public Vector2[] Uvs;
-    public int[] Triangles;
+    public Vector3[] vertices;
+    public Vector2[] uvs;
+    public int[] triangles;
 
-    public UnityEngine.Mesh generateMesh() {
-        var mesh = new UnityEngine.Mesh {vertices = Vertices, triangles = Triangles, uv = Uvs};
+    public UnityEngine.Mesh GenerateMesh() {
+        var mesh = new UnityEngine.Mesh {vertices = vertices, triangles = triangles, uv = uvs};
         mesh.RecalculateNormals();
         return mesh;
     }

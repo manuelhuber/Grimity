@@ -29,7 +29,7 @@ public class Perlin {
             frequency *= lacunarity;
         }
 
-        new Loop2D(width, height).loopY((x, y) => {
+        new Loop2D(width, height).LoopY((x, y) => {
             var normalizedHeight = data[x, y] / maxPossibleHeight;
             data[x, y] = Mathf.Clamp(normalizedHeight, 0, int.MaxValue);
         });
@@ -46,7 +46,7 @@ public class Perlin {
                                  float frequency) {
         var width = data.GetLength(0);
         var height = data.GetLength(1);
-        new Loop2D(width, height).loopY((x, y) => {
+        new Loop2D(width, height).LoopY((x, y) => {
             data[x, y] += amplitude * PerlinValue(x, y, scale, xOffset, yOffset, frequency);
         });
     }
