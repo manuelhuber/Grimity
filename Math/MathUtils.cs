@@ -28,5 +28,13 @@ public static class MathUtils {
 
         return (negative ? -1 : 1) * Mathf.RoundToInt(x);
     }
+
+    public static float MinMax(this float num, float min, float max) {
+        return Mathf.Min(max, Mathf.Max(num, min));
+    }
+
+    public static int MinMax(this int num, int min, int max) {
+        return Mathf.Min(max, Mathf.Max(num, min));
+    }
 }
 }
