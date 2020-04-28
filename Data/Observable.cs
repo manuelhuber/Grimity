@@ -7,6 +7,10 @@ public class Observable<T> : IObservable<T> {
 
     public T Value { get; private set; }
 
+    public Observable(T value) {
+        Value = value;
+    }
+
     public void Set(T next) {
         if (next.Equals(Value)) return;
         Value = next;
