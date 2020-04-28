@@ -12,12 +12,12 @@ public class Geometry {
         var bounds = new Bounds();
         gameObject.CalculateBounds(out bounds, Space.World);
         return bounds;
-        bounds.center = gameObject.transform.position;
-        bounds.size = Vector3.zero; // reset
-        var colliders = gameObject.GetComponentsInChildren<Collider>();
-        foreach (var col in colliders) bounds.Encapsulate(col.bounds);
-
-        return bounds;
+        // bounds.center = gameObject.transform.position;
+        // bounds.size = Vector3.zero; // reset
+        // var colliders = gameObject.GetComponentsInChildren<Collider>();
+        // foreach (var col in colliders) bounds.Encapsulate(col.bounds);
+        //
+        // return bounds;
     }
 }
 }
