@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 
 namespace Grimity.Collections {
 public static class CollectionExtensions {
-    public static T GetRandomElement<T>(this Collection<T> list) {
+    public static T GetRandomElement<T>(this IList<T> list) {
         return list[Random.Range(0, list.Count)];
     }
 

@@ -2,19 +2,22 @@ using System;
 using UnityEngine;
 
 namespace Grimity.Actions {
-public class IntervaledAction : MonoBehaviour {
-    private bool _isRunning;
+public class PeriodicalAction : MonoBehaviour {
+    /// <summary>
+    /// Interval time in Seconds
+    /// </summary>
+    public float interval;
 
-    private float _nextExecution;
     public Func<bool> action;
     public bool initialDelay;
-    public float interval;
+
+    private bool _isRunning;
+    private float _nextExecution;
 
     public bool IsRunning {
         get => _isRunning;
         set {
             if (initialDelay) _nextExecution = Time.time + interval;
-
             _isRunning = value;
         }
     }
@@ -23,7 +26,7 @@ public class IntervaledAction : MonoBehaviour {
     private void Update() {
         if (!IsRunning) return;
         if (!(Time.time >= _nextExecution)) return;
-        if (action.Invoke()) _nextExecution = Time.time + interval;
+        if (action != null && action.Invoke()) _nextExecution = Time.time + interval;
     }
 }
 }
