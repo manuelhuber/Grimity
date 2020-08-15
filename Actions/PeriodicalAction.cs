@@ -11,13 +11,15 @@ public class PeriodicalAction : MonoBehaviour {
     public Func<bool> action;
     public bool initialDelay;
 
+    public Func<float> getTime = () => Time.time;
+
     private bool _isRunning;
     private float _nextExecution;
 
     public bool IsRunning {
         get => _isRunning;
         set {
-            if (initialDelay) _nextExecution = Time.time + interval;
+            if (initialDelay) _nextExecution = getTime() + interval;
             _isRunning = value;
         }
     }
@@ -25,8 +27,8 @@ public class PeriodicalAction : MonoBehaviour {
 
     private void Update() {
         if (!IsRunning) return;
-        if (!(Time.time >= _nextExecution)) return;
-        if (action != null && action.Invoke()) _nextExecution = Time.time + interval;
+        if (!(getTime() >= _nextExecution)) return;
+        if (action != null && action.Invoke()) _nextExecution = getTime() + interval;
     }
 }
 }
