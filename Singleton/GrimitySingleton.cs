@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Grimity.Singleton {
@@ -52,6 +53,12 @@ public class GrimitySingleton<T> : MonoBehaviour where T : MonoBehaviour {
 
     private void OnDestroy() {
         mShuttingDown = true;
+    }
+
+    private void Start() {
+        if (this != Instance) {
+            Debug.LogError("Multiple instances of singleton! FIX ME!");
+        }
     }
 }
 }
