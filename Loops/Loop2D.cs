@@ -28,8 +28,9 @@ internal class Loop2D {
     /// <param name="action"></param>
     public void LoopY(Action<int, int> action) {
         for (var x = 0; x < _yMax; x = _increment(x))
-        for (var y = 0; y < _xMax; y = _increment(y))
+        for (var y = 0; y < _xMax; y = _increment(y)) {
             action(x, y);
+        }
     }
 
     /// <summary>
@@ -39,8 +40,9 @@ internal class Loop2D {
     /// <param name="action"></param>
     public void LoopX(Action<int, int> action) {
         for (var y = 0; y < _xMax; y = _increment(y))
-        for (var x = 0; x < _yMax; x = _increment(x))
+        for (var x = 0; x < _yMax; x = _increment(x)) {
             action(x, y);
+        }
     }
 }
 }

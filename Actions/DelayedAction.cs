@@ -8,6 +8,12 @@ public class DelayedAction : MonoBehaviour {
     private Func<float> _getTime = () => Time.time;
     public float TargetTime { get; private set; } = -1;
 
+    private void Update() {
+        if (TargetTime < 0 || !(_getTime() >= TargetTime)) return;
+        _action.Invoke();
+        Destroy(this);
+    }
+
     public DelayedAction withTime(Func<float> timeFunc) {
         _getTime = timeFunc;
         return this;
@@ -19,12 +25,6 @@ public class DelayedAction : MonoBehaviour {
 
     public void At(float timestamp) {
         TargetTime = timestamp;
-    }
-
-    private void Update() {
-        if (TargetTime < 0 || !(_getTime() >= TargetTime)) return;
-        _action.Invoke();
-        Destroy(this);
     }
 
     public DelayedAction Do(Action action) {

@@ -95,9 +95,10 @@ public static class NativeCollectionExtensions {
     public static unsafe void RemoveRange<T>(this NativeList<T> list, int index, int count)
         where T : struct {
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        if ((uint) index >= (uint) list.Length)
+        if ((uint) index >= (uint) list.Length) {
             throw new IndexOutOfRangeException(
                 $"Index {index} is out of range in NativeList of '{list.Length}' Length.");
+        }
 #endif
 
         var elemSize = UnsafeUtility.SizeOf<T>();
@@ -108,7 +109,9 @@ public static class NativeCollectionExtensions {
             elemSize * (list.Length - count - index));
 
         // No easy way to change length so we just loop this unfortunately.
-        for (var i = 0; i < count; i++) list.RemoveAtSwapBack(list.Length - 1);
+        for (var i = 0; i < count; i++) {
+            list.RemoveAtSwapBack(list.Length - 1);
+        }
     }
 
     /// <summary>
@@ -148,7 +151,8 @@ public static class NativeCollectionExtensions {
         return arr[column + rowLength * row];
     }
 
-    public static void Put2D<T>(this NativeArray<T> arr, T item, int row, int column, int rowLength) where T : struct {
+    public static void Put2D<T>(this NativeArray<T> arr, T item, int row, int column, int rowLength)
+        where T : struct {
         arr[column + rowLength * row] = item;
     }
 }

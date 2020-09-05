@@ -7,13 +7,15 @@ public class RuntimeGameObjectSet : UnityEngine.ScriptableObject {
     [SerializeField] public readonly List<GameObject> Items = new List<GameObject>();
 
     public void Add(GameObject thing) {
-        if (!Items.Contains(thing))
+        if (!Items.Contains(thing)) {
             Items.Add(thing);
+        }
     }
 
     public void Remove(GameObject thing) {
-        if (Items.Contains(thing))
+        if (Items.Contains(thing)) {
             Items.Remove(thing);
+        }
     }
 }
 }

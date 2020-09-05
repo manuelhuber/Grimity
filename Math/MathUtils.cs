@@ -3,10 +3,10 @@ using UnityEngine;
 namespace Grimity.Math {
 public static class MathUtils {
     /// <summary>
-    /// Rounds the given number to the nearest multiple of the given number.
-    /// E.g. multiple=4 would round numbers to ..., -4, 0, 4, 8, 12, ...
-    /// with offset by half we would round to -6, -2, 2, 6, 10, ...
-    /// Numbers that are the exact middle between 2 multiple well be rounded down.
+    ///     Rounds the given number to the nearest multiple of the given number.
+    ///     E.g. multiple=4 would round numbers to ..., -4, 0, 4, 8, 12, ...
+    ///     with offset by half we would round to -6, -2, 2, 6, 10, ...
+    ///     Numbers that are the exact middle between 2 multiple well be rounded down.
     /// </summary>
     /// <param name="numberRaw">The number to round</param>
     /// <param name="multiple">The number to whose multiple we should round</param>
