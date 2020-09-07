@@ -11,5 +11,9 @@ public class AutoRegisterGameObject : MonoBehaviour {
     private void OnDisable() {
         runtimeSet.Remove(gameObject);
     }
+
+    private void OnDestroy() {
+        runtimeSet.Remove(gameObject);
+    }
 }
 }

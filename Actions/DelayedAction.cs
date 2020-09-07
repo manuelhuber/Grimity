@@ -1,5 +1,4 @@
 using System;
-using Ludiq.PeekCore;
 using UnityEngine;
 
 namespace Grimity.Actions {
@@ -35,7 +34,7 @@ public class DelayedAction : MonoBehaviour {
 
 public static class DelayedActionExtension {
     public static DelayedAction Do(this MonoBehaviour mono, Action action) {
-        return mono.AddComponent<DelayedAction>().Do(action);
+        return mono.gameObject.AddComponent<DelayedAction>().Do(action);
     }
 }
 }
