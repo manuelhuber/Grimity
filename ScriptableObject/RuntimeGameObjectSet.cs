@@ -7,8 +7,9 @@ namespace Grimity.ScriptableObject {
 public class RuntimeGameObjectSet : UnityEngine.ScriptableObject {
     public delegate void OnChangeHandler(ReadOnlyCollection<GameObject> items);
 
-    private readonly List<GameObject> items = new List<GameObject>();
     public ReadOnlyCollection<GameObject> Items => new ReadOnlyCollection<GameObject>(items);
+
+    private readonly List<GameObject> items = new List<GameObject>();
 
     public event OnChangeHandler OnChange;
 
