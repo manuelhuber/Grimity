@@ -14,6 +14,12 @@ public abstract class Optional<T> {
     }
 }
 
+public static class OptionalExtensions {
+    public static Optional<T> AsOptional<T>(this T me) {
+        return me == null ? Optional<T>.NoValue() : Optional<T>.Of(me);
+    }
+}
+
 internal class ValueOptional<T> : Optional<T> {
     public ValueOptional(T value) {
         Value = value;
