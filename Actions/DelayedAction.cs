@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Grimity.Actions {
 public class DelayedAction : MonoBehaviour {
+    public float TargetTime { get; private set; } = -1;
     private Action _action;
     private Func<float> _getTime = () => Time.time;
-    public float TargetTime { get; private set; } = -1;
 
     private void Update() {
         if (TargetTime < 0 || !(_getTime() >= TargetTime)) return;
