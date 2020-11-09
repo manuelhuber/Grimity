@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Grimity.Collections;
 using UnityEngine;
 
 namespace Grimity.UserInput {
@@ -10,26 +11,20 @@ public static class InputUtils {
             .Where(k => (int) k <= (int) KeyCode.Mouse6)
             .ToArray();
 
-    public static IEnumerable<KeyCode> GetCurrentKeysDown() {
-        if (!Input.anyKeyDown) yield break;
-        foreach (var t in KeyboardAndMouseKeyCodes) {
-            if (Input.GetKeyDown(t)) {
-                yield return t;
-            }
-        }
+    public static HashSet<KeyCode> GetCurrentKeysDown() {
+        return !Input.anyKeyDown
+            ? new HashSet<KeyCode>()
+            : KeyboardAndMouseKeyCodes.Where(Input.GetKeyDown).ToHashSet();
     }
 
-    public static IEnumerable<KeyCode> GetCurrentKeys() {
-        if (!Input.anyKey) yield break;
-        foreach (var t in KeyboardAndMouseKeyCodes) {
-            if (Input.GetKey(t)) {
-                yield return t;
-            }
-        }
+    public static HashSet<KeyCode> GetCurrentKeys() {
+        return !Input.anyKey
+            ? new HashSet<KeyCode>()
+            : KeyboardAndMouseKeyCodes.Where(Input.GetKey).ToHashSet();
     }
 
-    public static IEnumerable<KeyCode> GetCurrentKeysUp() {
-        return KeyboardAndMouseKeyCodes.Where(Input.GetKeyUp);
+    public static HashSet<KeyCode> GetCurrentKeysUp() {
+        return KeyboardAndMouseKeyCodes.Where(Input.GetKeyUp).ToHashSet();
     }
 }
 }
