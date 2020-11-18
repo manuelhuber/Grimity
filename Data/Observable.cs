@@ -12,7 +12,9 @@ public class Observable<T> : IObservable<T> {
     public void Set(T next) {
         if (next.Equals(Value)) return;
         Value = next;
-        foreach (var observer in _observers) {
+        // copy to new array since an observer might remove themselves and we aren't allowed to modify
+        // a collection during enumeration 
+        foreach (var observer in _observers.ToArray()) {
             observer.Invoke(Value);
         }
     }
