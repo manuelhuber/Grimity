@@ -16,7 +16,7 @@ public abstract class Optional<T> {
 
 public static class OptionalExtensions {
     public static Optional<T> AsOptional<T>(this T me) {
-        return me == null ? Optional<T>.NoValue() : Optional<T>.Of(me);
+        return me == null || me.Equals(null) ? Optional<T>.NoValue() : Optional<T>.Of(me);
     }
 }
 
