@@ -9,26 +9,31 @@ public class PeriodicalAction : MonoBehaviour {
     public float interval;
 
     public bool initialDelay;
+
     public float NextExecution { get; private set; }
 
     public bool IsRunning {
         get => _isRunning;
         set {
-            if (initialDelay) NextExecution = getTime() + interval;
+            if (initialDelay) NextExecution = GetTime() + interval;
             _isRunning = value;
         }
     }
 
     private bool _isRunning;
 
-    public Func<bool> action;
+    /// <summary>
+    ///     Return true if the action was successful and the cooldown should be set
+    /// </summary>
+    public Func<bool> Action;
 
-    public Func<float> getTime = () => Time.time;
+    public Func<float> GetTime = () => Time.time;
+
 
     private void Update() {
         if (!IsRunning) return;
-        if (!(getTime() >= NextExecution)) return;
-        if (action != null && action.Invoke()) NextExecution = getTime() + interval;
+        if (!(GetTime() >= NextExecution)) return;
+        if (Action != null && Action.Invoke()) NextExecution = GetTime() + interval;
     }
 
     public void SetNextExecution(float nextExecution) {
