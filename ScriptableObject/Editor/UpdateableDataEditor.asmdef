@@ -1,0 +1,17 @@
+{
+  "name": "UpdateableDataEditor",
+  "references": [
+    "GUID:5df84094c080aa2499389e87d2aaaa5a"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

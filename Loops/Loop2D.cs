@@ -1,7 +1,7 @@
 using System;
 
 namespace Grimity.Loops {
-internal class Loop2D {
+public class Loop2D {
     private readonly Func<int, int> _increment = x => x + 1;
     private readonly int _xMax;
     private readonly int _yMax;

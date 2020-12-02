@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace Grimity.ScriptableObject {
 public class AutoRegisterGameObject : MonoBehaviour {
-    [SerializeField] public RuntimeGameObjectSet runtimeSet;
+    [SerializeField]
+    public RuntimeGameObjectSet runtimeSet;
 
     private void OnEnable() {
         runtimeSet.Add(gameObject);
