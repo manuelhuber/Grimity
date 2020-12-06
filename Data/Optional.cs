@@ -5,6 +5,12 @@ public abstract class Optional<T> {
     public abstract T Value { get; }
     public abstract bool HasValue { get; }
 
+    public void Do(Action<T> action) {
+        if (HasValue) {
+            action(Value);
+        }
+    }
+
     public static Optional<T> NoValue() {
         return new NullOptional<T>();
     }

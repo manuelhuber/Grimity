@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace Grimity.GameObjects {
-public class GameObjectUtils {
+public static class GameObjectUtils {
     public static T GetComp<T>(Component component) {
         return component.GetComponent<T>();
     }
