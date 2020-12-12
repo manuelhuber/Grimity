@@ -41,6 +41,6 @@ internal class NullOptional<T> : Optional<T> {
     public override bool HasValue => false;
 }
 
-internal class NoValue : Exception {
+public class NoValue : Exception {
 }
 }

@@ -13,5 +13,15 @@ public static class GameObjectUtils {
     public static bool NotNull(GameObject component) {
         return component != null;
     }
+
+    public static void ClearChildren(this GameObject gameObject) {
+        gameObject.transform.ClearChildren();
+    }
+
+    public static void ClearChildren(this Transform trans) {
+        foreach (Transform child in trans) {
+            Object.Destroy(child.gameObject);
+        }
+    }
 }
 }
