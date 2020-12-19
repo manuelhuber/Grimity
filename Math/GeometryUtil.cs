@@ -11,7 +11,10 @@ public static class GeometryUtil {
     /// <param name="target">The target that might be in the field of view</param>
     /// <param name="filedOfView">The "view angle" in degrees</param>
     /// <returns></returns>
-    public static bool IsInView(Vector3 viewer, Vector3 viewDirection, Vector3 target, float filedOfView) {
+    public static bool IsInView(Vector3 viewer,
+                                Vector3 viewDirection,
+                                Vector3 target,
+                                float filedOfView) {
         var casterToTarget = (target - viewer).normalized;
         var rightAngle = filedOfView / 2;
         var leftAngle = 360 - rightAngle;

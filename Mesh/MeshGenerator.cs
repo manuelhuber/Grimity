@@ -47,11 +47,7 @@ public class MeshGenerator {
         });
 
 
-        var mesh = new MeshData {
-            vertices = vertices,
-            triangles = triangles,
-            uvs = uvs
-        };
+        var mesh = new MeshData {vertices = vertices, triangles = triangles, uvs = uvs};
         return mesh;
     }
 }

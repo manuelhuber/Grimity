@@ -51,7 +51,12 @@ public class Perlin {
         });
     }
 
-    private static float PerlinValue(int x, int y, float scale, int xOffset, int yOffset, float frequency) {
+    private static float PerlinValue(int x,
+                                     int y,
+                                     float scale,
+                                     int xOffset,
+                                     int yOffset,
+                                     float frequency) {
         var xSample = (x + xOffset) / scale * frequency;
         var ySample = (y + yOffset) / scale * frequency;
         var perlinNoise = Mathf.PerlinNoise(xSample, ySample);

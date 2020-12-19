@@ -17,7 +17,8 @@ public class GrimitySingleton<T> : MonoBehaviour where T : MonoBehaviour {
     public static T Instance {
         get {
             if (mShuttingDown) {
-                Debug.LogWarning("[Singleton] Instance '" + typeof(T) +
+                Debug.LogWarning("[Singleton] Instance '" +
+                                 typeof(T) +
                                  "' already destroyed. Returning null.");
                 return null;
             }

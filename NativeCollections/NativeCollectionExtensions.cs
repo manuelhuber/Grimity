@@ -147,11 +147,18 @@ public static class NativeCollectionExtensions {
 #endif
     }
 
-    public static T Get2D<T>(this NativeArray<T> arr, int row, int column, int rowLength) where T : struct {
+    public static T Get2D<T>(this NativeArray<T> arr,
+                             int row,
+                             int column,
+                             int rowLength) where T : struct {
         return arr[column + rowLength * row];
     }
 
-    public static void Put2D<T>(this NativeArray<T> arr, T item, int row, int column, int rowLength)
+    public static void Put2D<T>(this NativeArray<T> arr,
+                                T item,
+                                int row,
+                                int column,
+                                int rowLength)
         where T : struct {
         arr[column + rowLength * row] = item;
     }
