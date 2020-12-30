@@ -18,6 +18,10 @@ public abstract class Optional<T> {
     public static Optional<T> Of(T value) {
         return new ValueOptional<T>(value);
     }
+
+    public static implicit operator T(Optional<T> optional) {
+        return optional.Value;
+    }
 }
 
 public static class OptionalExtensions {

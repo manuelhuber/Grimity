@@ -19,6 +19,10 @@ public class Observable<T> : IObservable<T> {
         }
     }
 
+    public static implicit operator T(Observable<T> optional) {
+        return optional.Value;
+    }
+
     #region IObservable<T> Members
 
     public T Value { get; private set; }
