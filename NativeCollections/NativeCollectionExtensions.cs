@@ -10,14 +10,12 @@ public static class NativeCollectionExtensions {
     /// <typeparam name="T"><see cref="NativeList{T}" />.</typeparam>
     /// <param name="list">The <see cref="NativeList{T}" /> to reverse.</param>
     public static void Reverse<T>(this NativeList<T> list)
-        where T : struct {
+        where T : unmanaged {
         var length = list.Length;
         var index1 = 0;
 
         for (var index2 = length - 1; index1 < index2; --index2) {
-            var obj = list[index1];
-            list[index1] = list[index2];
-            list[index2] = obj;
+            (list[index1], list[index2]) = (list[index2], list[index1]);
             ++index1;
         }
     }
@@ -30,7 +28,7 @@ public static class NativeCollectionExtensions {
     /// <param name="item">The element.</param>
     /// <param name="index">The index.</param>
     public static unsafe void Insert<T>(this NativeList<T> list, T item, int index)
-        where T : struct {
+        where T : unmanaged {
         if (list.Length == list.Capacity - 1) list.Capacity *= 2;
 
         // Inserting at end same as an add
@@ -45,7 +43,7 @@ public static class NativeCollectionExtensions {
         list.Add(default);
 
         var elemSize = UnsafeUtility.SizeOf<T>();
-        var basePtr = (byte*) list.GetUnsafePtr();
+        var basePtr = (byte*)list.GetUnsafePtr();
 
         var from = index * elemSize + basePtr;
         var to = elemSize * (index + 1) + basePtr;
@@ -65,7 +63,7 @@ public static class NativeCollectionExtensions {
     /// <param name="element">The element.</param>
     /// <returns>True if removed, else false.</returns>
     public static bool Remove<T, TI>(this NativeList<T> list, TI element)
-        where T : struct, IEquatable<TI>
+        where T : unmanaged, IEquatable<TI>
         where TI : struct {
         var index = list.IndexOf(element);
         if (index < 0) return false;
@@ -81,7 +79,7 @@ public static class NativeCollectionExtensions {
     /// <param name="list">The list to remove from.</param>
     /// <param name="index">The index to remove.</param>
     public static void RemoveAt<T>(this NativeList<T> list, int index)
-        where T : struct {
+        where T : unmanaged {
         list.RemoveRange(index, 1);
     }
 
@@ -93,16 +91,16 @@ public static class NativeCollectionExtensions {
     /// <param name="index">The index to remove.</param>
     /// <param name="count">Number of elements to remove.</param>
     public static unsafe void RemoveRange<T>(this NativeList<T> list, int index, int count)
-        where T : struct {
+        where T : unmanaged {
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-        if ((uint) index >= (uint) list.Length) {
+        if ((uint)index >= (uint)list.Length) {
             throw new IndexOutOfRangeException(
                 $"Index {index} is out of range in NativeList of '{list.Length}' Length.");
         }
 #endif
 
         var elemSize = UnsafeUtility.SizeOf<T>();
-        var basePtr = (byte*) list.GetUnsafePtr();
+        var basePtr = (byte*)list.GetUnsafePtr();
 
         UnsafeUtility.MemMove(basePtr + index * elemSize,
             basePtr + (index + count) * elemSize,
@@ -121,7 +119,7 @@ public static class NativeCollectionExtensions {
     /// <param name="buffer">The <see cref="NativeList{T}" /> to resize.</param>
     /// <param name="length">Size to resize to.</param>
     public static unsafe void ResizeInitialized<T>(this NativeList<T> buffer, int length)
-        where T : struct {
+        where T : unmanaged {
         buffer.ResizeUninitialized(length);
         UnsafeUtility.MemClear(buffer.GetUnsafePtr(), length * UnsafeUtility.SizeOf<T>());
     }

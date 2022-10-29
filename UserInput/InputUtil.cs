@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Grimity.Collections;
 using UnityEngine;
 
 namespace Grimity.UserInput {
@@ -8,7 +7,7 @@ public static class InputUtils {
     private static readonly KeyCode[] KeyboardAndMouseKeyCodes =
         System.Enum.GetValues(typeof(KeyCode))
             .Cast<KeyCode>()
-            .Where(k => (int) k <= (int) KeyCode.Mouse6)
+            .Where(k => (int)k <= (int)KeyCode.Mouse6)
             .ToArray();
 
     public static HashSet<KeyCode> GetCurrentKeysDown() {
