@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Grimity.Cursor {
 public class CursorUtil {
@@ -11,7 +12,7 @@ public class CursorUtil {
                                          int layerMask = -5,
                                          int maxDistance = 10000,
                                          bool debug = false) {
-        var ray = camera.ScreenPointToRay(Input.mousePosition);
+        var ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (debug) Debug.DrawRay(camera.transform.position, ray.direction * 1000, Color.red);
         return Physics.Raycast(ray, out hit, maxDistance, layerMask);
     }
