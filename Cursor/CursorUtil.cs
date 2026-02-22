@@ -29,7 +29,7 @@ public class CursorUtil {
                                          int layerMask,
                                          Camera camera) {
         var boo = GetCursorLocation(out var rayHit, camera, layerMask);
-        hit = rayHit.transform.gameObject;
+        hit = rayHit.transform?.gameObject;
         return boo;
     }
 }
