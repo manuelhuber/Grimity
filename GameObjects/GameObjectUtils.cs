@@ -20,7 +20,9 @@ public static class GameObjectUtils {
 
     public static void ClearChildren(this Transform trans) {
         foreach (Transform child in trans) {
-            Object.Destroy(child.gameObject);
+            var childGameObject = child.gameObject;
+            childGameObject.SetActive(false);
+            Object.Destroy(childGameObject);
         }
     }
 }
