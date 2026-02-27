@@ -20,5 +20,7 @@ public static class EnumerableExtensions {
             action(obj);
         }
     }
+
+    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> list) => list.OrderBy(_ => Random.value);
 }
 }
