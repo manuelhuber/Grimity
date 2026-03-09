@@ -9,6 +9,7 @@ public static class CollectionExtensions {
     }
 
     public static T GetRandomElement<T>(this T[] array) {
+        if (array.Length == 0) return default;
         return array[Random.Range(0, array.Length)];
     }
 
