@@ -9,6 +9,10 @@ public class Observable<T> : IObservable<T> {
         Value = value;
     }
 
+    public void Set(Func<T, T> next) {
+        Set(next(Value));
+    }
+
     public void Set(T next) {
         if (IsSameValue(next)) return;
         Value = next;
