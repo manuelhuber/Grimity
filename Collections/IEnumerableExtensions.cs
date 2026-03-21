@@ -54,15 +54,20 @@ public static class EnumerableExtensions {
         return list;
     }
 
-    public static IEnumerable<T> TakeRandom<T>(this IEnumerable<T> source, int count) {
+    public static IEnumerable<T> TakeRandom<T>(this IEnumerable<T> source, int count, bool throwIfNotEnough = false) {
         if (source is null) throw new ArgumentNullException(nameof(source));
         if (count < 0) throw new ArgumentOutOfRangeException(nameof(count), "count must be ≥ 0");
 
         var list = source.ToList();
 
-        if (count > list.Count)
-            throw new ArgumentOutOfRangeException(nameof(count),
-                $"Requested {count} elements but source only has {list.Count}.");
+        if (count > list.Count) {
+            if (throwIfNotEnough) {
+                throw new ArgumentOutOfRangeException(nameof(count),
+                    $"Requested {count} elements but source only has {list.Count}.");
+            }
+
+            count = list.Count;
+        }
 
         for (var i = 0; i < count; i++) {
             var j = Random.Range(i, list.Count);
