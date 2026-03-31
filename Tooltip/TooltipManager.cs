@@ -35,6 +35,12 @@ public class TooltipManager : MonoBehaviour {
             type = type.BaseType; // fallback up the hierarchy
 
         _tooltipUi.transform.ClearChildren();
+
+        if (!prefab) {
+            Debug.LogError($"No tooltip prefab found for type {type}");
+            return;
+        }
+
         var activeTooltip = Instantiate(prefab, _tooltipUi.transform);
         activeTooltip.Populate(data);
         ShowTooltip();
