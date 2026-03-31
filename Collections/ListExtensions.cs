@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using UnityEngine;
 
 namespace Grimity.Collections {
@@ -15,6 +16,21 @@ public static class CollectionExtensions {
 
     public static T Last<T>(this Collection<T> list) {
         return list[list.Count - 1];
+    }
+
+    public static T Dequeue<T>(this Collection<T> list) {
+        var t = list.First();
+        list.Remove(t);
+        return t;
+    }
+
+    public static List<T> Dequeue<T>(this Collection<T> list, int count) {
+        var t = list.Take(count).ToList();
+        foreach (var item in t) {
+            list.Remove(item);
+        }
+
+        return t;
     }
 }
 }

@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Grimity.Rng {
 public static class RandomUtils {
-    public static bool Flip() {
-        return Random.value > .5f;
+    public static bool Flip(float chance = .5f) {
+        return Random.value < chance;
     }
 
     public static int MaybeNegative(int num) {
