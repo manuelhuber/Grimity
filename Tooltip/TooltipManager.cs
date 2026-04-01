@@ -21,6 +21,7 @@ public class TooltipManager : MonoBehaviour {
         _prefabMap = prefabRegistry.ToDictionary(v => v.DataType, v => v);
         _tooltipUi = Instantiate(TooltipPrefab, TooltipContainer.transform);
         _uiRectTransform = _tooltipUi.gameObject.GetComponent<RectTransform>();
+        HideTooltip();
     }
 
     private void Update() {
