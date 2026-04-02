@@ -21,8 +21,11 @@ public static class EnumerableExtensions {
         }
     }
 
-    [Obsolete("IEnumerable is not good for shuffle, use array or list specific functions")]
     public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> list) => list.OrderBy(_ => Random.value);
+
+    public static IEnumerable<T> NotNull<T>(this IEnumerable<T> enumerable) {
+        return enumerable.Where(i => i != null);
+    }
 
     public static T[] Shuffle<T>(this T[] source) {
         var array = (T[])source.Clone();
