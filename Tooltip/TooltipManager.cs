@@ -43,7 +43,7 @@ public class TooltipManager : MonoBehaviour {
         }
 
         var activeTooltip = Instantiate(prefab, _tooltipUi.transform);
-        activeTooltip.Populate(data);
+        activeTooltip.Bind(data);
         ShowTooltip();
     }
 
