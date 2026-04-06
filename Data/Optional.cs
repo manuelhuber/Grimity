@@ -11,6 +11,8 @@ public abstract class Optional<T> {
         }
     }
 
+    public abstract bool Get(out T value);
+
     public static Optional<T> NoValue() {
         return new NullOptional<T>();
     }
@@ -38,11 +40,21 @@ internal class ValueOptional<T> : Optional<T> {
     public override T Value { get; }
 
     public override bool HasValue => true;
+
+    public override bool Get(out T value) {
+        value = Value;
+        return true;
+    }
 }
 
 internal class NullOptional<T> : Optional<T> {
     public override T Value => throw new NoValue();
     public override bool HasValue => false;
+
+    public override bool Get(out T value) {
+        value = default;
+        return false;
+    }
 }
 
 public class NoValue : Exception {
