@@ -9,5 +9,9 @@ public static class RandomUtils {
     public static int MaybeNegative(int num) {
         return (Flip() ? 1 : -1) * num;
     }
+
+    public static float MaybeNegative(this float num) {
+        return (Flip() ? 1 : -1) * num;
+    }
 }
 }
