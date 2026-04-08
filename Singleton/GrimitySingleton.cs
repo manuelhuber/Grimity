@@ -26,7 +26,7 @@ public class GrimitySingleton<T> : MonoBehaviour where T : MonoBehaviour {
             lock (MLock) {
                 if (mInstance == null) {
                     // Search for existing instance.
-                    mInstance = (T) FindObjectOfType(typeof(T));
+                    mInstance = (T)FindAnyObjectByType(typeof(T));
 
                     // Create new instance if one doesn't already exist.
                     if (mInstance == null) {
