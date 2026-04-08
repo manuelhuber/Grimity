@@ -21,6 +21,10 @@ public static class EnumerableExtensions {
         }
     }
 
+    public static string JoinToString<T>(this IEnumerable<T> ie, string separator) {
+        return string.Join(separator, ie);
+    }
+
     public static IEnumerable<T> NotNull<T>(this IEnumerable<T> enumerable) {
         return enumerable.Where(i => i != null);
     }
