@@ -18,6 +18,11 @@ public static class GameObjectUtils {
         gameObject.transform.ClearChildren();
     }
 
+    public static bool ToggleActive(this GameObject gameObject) {
+        gameObject.SetActive(!gameObject.activeSelf);
+        return gameObject.activeSelf;
+    }
+
     public static void ClearChildren(this Transform trans) {
         foreach (Transform child in trans) {
             var childGameObject = child.gameObject;
