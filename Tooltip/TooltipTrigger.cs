@@ -19,7 +19,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         _tooltipManager = TooltipManager.Instance;
     }
 
-    private void OnDestroy() {
+    private void OnDisable() {
         if (_isPointerOver) _tooltipManager.HideTooltip();
     }
 
