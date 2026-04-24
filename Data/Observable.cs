@@ -36,12 +36,14 @@ public class Observable<T> : IObservable<T> {
 
     public T Value { get; private set; }
 
-    public void OnChange(Action<T> obs, bool callImmediately = true) {
+    public Action OnChange(Action<T> obs, bool callImmediately = true) {
         if (!_observers.Contains(obs)) {
             _observers.Add(obs);
         }
 
         if (callImmediately) obs.Invoke(Value);
+
+        return () => { RemoveOnChange(obs); };
     }
 
     public bool RemoveOnChange(Action<T> obs) {
