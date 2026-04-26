@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Grimity.Collections {
 public static class IReadOnlyListExtensions {
@@ -10,6 +11,15 @@ public static class IReadOnlyListExtensions {
         }
 
         return -1;
+    }
+
+    public static List<int> GetIndices<T>(this IReadOnlyList<T> list, Predicate<T> predicate) {
+        var indices = new List<int>();
+        for (var i = 0; i < list.Count; i++) {
+            if (predicate(list[i])) indices.Add(i);
+        }
+
+        return indices;
     }
 }
 }
