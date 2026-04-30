@@ -32,5 +32,7 @@ public static class CollectionExtensions {
 
         return t;
     }
+
+    public static List<T> PrefilledList<T>(int size, T value) => new(Enumerable.Repeat(value, size));
 }
 }
