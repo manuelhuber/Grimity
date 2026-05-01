@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Grimity.Collections {
 public static class CollectionExtensions {
@@ -34,5 +35,11 @@ public static class CollectionExtensions {
     }
 
     public static List<T> PrefilledList<T>(int size, T value) => new(Enumerable.Repeat(value, size));
+
+    public static T[] PrefilledArray<T>(int size, T value) {
+        var x = new T[size];
+        Array.Fill(x, value);
+        return x;
+    }
 }
 }
