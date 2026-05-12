@@ -12,27 +12,42 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private Func<TooltipData> _dataProvider;
     private bool _isPointerOver;
 
-    public void SetData(TooltipData data) => _data = data;
-    public void SetData(Func<TooltipData> dataProvider) => _dataProvider = dataProvider;
+    private TooltipManager Manager {
+        get {
+            if (!_tooltipManager) _tooltipManager = TooltipManager.Instance;
+            return _tooltipManager;
+        }
+    }
 
-    private void Start() {
-        _tooltipManager = TooltipManager.Instance;
+    public void SetData(TooltipData data) {
+        _data = data;
+        UpdateTooltip();
+    }
+
+    public void SetData(Func<TooltipData> dataProvider) {
+        _dataProvider = dataProvider;
+        UpdateTooltip();
+    }
+
+    private void UpdateTooltip() {
+        if (!_isPointerOver) return;
+        var tooltipData = _data ?? _dataProvider?.Invoke();
+        if (tooltipData != null) {
+            Manager.ShowTooltip(tooltipData, HorizontalAlignment, VerticalAlignment);
+        }
     }
 
     private void OnDisable() {
-        if (_isPointerOver) _tooltipManager.HideTooltip();
+        if (_isPointerOver) Manager.HideTooltip();
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
         _isPointerOver = true;
-        var tooltipData = _data ?? _dataProvider?.Invoke();
-        if (tooltipData != null) {
-            _tooltipManager.ShowTooltip(tooltipData, HorizontalAlignment, VerticalAlignment);
-        }
+        UpdateTooltip();
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        _tooltipManager.HideTooltip();
+        Manager.HideTooltip();
         _isPointerOver = false;
     }
 }
