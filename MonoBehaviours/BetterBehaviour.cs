@@ -6,6 +6,7 @@ namespace Grimity.MonoBehaviours {
 public abstract class BetterBehaviour : MonoBehaviour {
     private readonly List<Action> _cleanup = new();
     protected void RegisterCleanup(Action action) => _cleanup.Add(action);
+    protected void RegisterCleanup(IDisposable disposable) => _cleanup.Add(disposable.Dispose);
 
     private void OnDestroy() {
         Cleanup();
