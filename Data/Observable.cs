@@ -19,6 +19,7 @@ public class Observable<T> : IObservable<T> {
         // copy to new array since an observer might remove themselves and we aren't allowed to modify
         // a collection during enumeration 
         foreach (var observer in _observers.ToArray()) {
+            if (!_observers.Contains(observer)) continue;
             observer.Invoke(Value);
         }
     }
