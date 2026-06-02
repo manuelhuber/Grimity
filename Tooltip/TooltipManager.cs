@@ -12,7 +12,10 @@ public class TooltipManager : MonoBehaviour {
     [SerializeField] private List<TooltipView> prefabRegistry;
     [SerializeField] private GameObject TooltipPrefab;
     [SerializeField] private GameObject TooltipContainer;
-    [SerializeField] private int margins = 5;
+    [SerializeField] private int horizontalMarginLeft = 5;
+    [SerializeField] private int horizontalMarginRight = 5;
+    [SerializeField] private int verticalMarginTop = 5;
+    [SerializeField] private int verticalMarginBottom = 5;
 
     private GameObject _tooltipUi;
     private RectTransform _uiRectTransform;
@@ -108,14 +111,14 @@ public class TooltipManager : MonoBehaviour {
             VerticalAlignment.Top => 0f,
         };
         var posX = horizontalAlignment switch {
-            HorizontalAlignment.Left => -margins,
+            HorizontalAlignment.Left => -horizontalMarginLeft,
             HorizontalAlignment.Middle => 0,
-            HorizontalAlignment.Right => margins,
+            HorizontalAlignment.Right => horizontalMarginRight,
         };
         var posY = verticalAlignment switch {
-            VerticalAlignment.Bottom => -margins,
+            VerticalAlignment.Bottom => -verticalMarginBottom,
             VerticalAlignment.Middle => 0,
-            VerticalAlignment.Top => margins,
+            VerticalAlignment.Top => verticalMarginTop,
         };
         _uiRectTransform.anchorMax = new Vector2(anchorX, anchorY);
         _uiRectTransform.anchorMin = new Vector2(anchorX, anchorY);
