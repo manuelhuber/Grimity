@@ -13,6 +13,16 @@ public static class IReadOnlyListExtensions {
         return -1;
     }
 
+    public static int FindIndex<T>(this IReadOnlyList<T> list, Predicate<T> predicate) {
+        for (var i = 0; i < list.Count; i++) {
+            if (predicate(list[i])) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     public static List<int> GetIndices<T>(this IReadOnlyList<T> list, Predicate<T> predicate) {
         var indices = new List<int>();
         for (var i = 0; i < list.Count; i++) {
