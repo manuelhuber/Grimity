@@ -14,7 +14,15 @@ public abstract class BetterBehaviour : MonoBehaviour {
     }
 
     protected void Cleanup() {
-        foreach (var action in _cleanup) action();
+        foreach (var action in _cleanup) {
+            try {
+                action();
+            }
+            catch (Exception e) {
+                Debug.LogException(e);
+            }
+        }
+
         _cleanup.Clear();
     }
 
