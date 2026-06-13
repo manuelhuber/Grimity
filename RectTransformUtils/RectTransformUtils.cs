@@ -13,19 +13,22 @@ public static class RectTransformUtils {
 
 
     public static bool FullyVisible(RectTransform viewport, RectTransform target) {
-        var viewportRect = GetWorldRect(viewport);
+        var viewportRect = viewport.GetWorldRect();
         var (min, max) = target.GetMinMaxWorldSpace();
         return viewportRect.Contains(min) && viewportRect.Contains(max);
     }
 
     public static bool PartiallyVisible(RectTransform viewport, RectTransform target) {
-        var viewportRect = GetWorldRect(viewport);
-        var childRect = GetWorldRect(target);
+        var viewportRect = viewport.GetWorldRect();
+        var childRect = target.GetWorldRect();
         return viewportRect.Overlaps(childRect);
     }
 
-    private static Rect GetWorldRect(RectTransform rt) {
-        var corners = new Vector3[4];
+    public static Rect GetWorldRect(this RectTransform rt) {
+        return rt.GetWorldRect(new Vector3[4]);
+    }
+
+    public static Rect GetWorldRect(this RectTransform rt, Vector3[] corners) {
         rt.GetWorldCorners(corners);
         // corners: [0]=bottom-left, [1]=top-left, [2]=top-right, [3]=bottom-right
         return new Rect(corners[0].x,
