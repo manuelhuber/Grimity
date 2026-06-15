@@ -12,13 +12,13 @@ public static class RectTransformUtils {
     }
 
 
-    public static bool FullyVisible(RectTransform viewport, RectTransform target) {
+    public static bool FullyInside(RectTransform viewport, RectTransform target) {
         var viewportRect = viewport.GetWorldRect();
         var (min, max) = target.GetMinMaxWorldSpace();
         return viewportRect.Contains(min) && viewportRect.Contains(max);
     }
 
-    public static bool PartiallyVisible(RectTransform viewport, RectTransform target) {
+    public static bool PartiallyInside(RectTransform viewport, RectTransform target) {
         var viewportRect = viewport.GetWorldRect();
         var childRect = target.GetWorldRect();
         return viewportRect.Overlaps(childRect);
