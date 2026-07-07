@@ -1,16 +1,14 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Grimity.Tooltip {
 public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private VerticalAlignment VerticalAlignment;
     [SerializeField] private HorizontalAlignment HorizontalAlignment;
+    private TooltipData _data;
+    private bool _isPointerOver;
 
     private TooltipManager _tooltipManager;
-    private TooltipData _data;
-    private Func<TooltipData> _dataProvider;
-    private bool _isPointerOver;
 
     private TooltipManager Manager {
         get {
@@ -19,26 +17,12 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    public void SetData(TooltipData data) {
-        _data = data;
-        UpdateTooltip();
-    }
-
-    public void SetData(Func<TooltipData> dataProvider) {
-        _dataProvider = dataProvider;
-        UpdateTooltip();
-    }
-
-    private void UpdateTooltip() {
-        if (!_isPointerOver) return;
-        var tooltipData = _data ?? _dataProvider?.Invoke();
-        if (tooltipData != null) {
-            Manager.ShowTooltip(tooltipData, HorizontalAlignment, VerticalAlignment);
-        }
-    }
-
     private void OnDisable() {
         if (_isPointerOver) Manager.HideTooltip();
+    }
+
+    private void OnDestroy() {
+        _data?.Dispose();
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -49,6 +33,19 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerExit(PointerEventData eventData) {
         Manager.HideTooltip();
         _isPointerOver = false;
+    }
+
+    public void SetData(TooltipData data) {
+        _data?.Dispose();
+        _data = data;
+        UpdateTooltip();
+    }
+
+    private void UpdateTooltip() {
+        if (!_isPointerOver) return;
+        if (_data != null) {
+            Manager.ShowTooltip(_data, HorizontalAlignment, VerticalAlignment);
+        }
     }
 }
 }
