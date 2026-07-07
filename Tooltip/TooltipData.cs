@@ -1,7 +1,10 @@
 using System;
 
 namespace Grimity.Tooltip {
-public class TooltipData {
+public abstract class TooltipData : IDisposable {
+    public virtual void Dispose() {
+    }
+
     public event Action<TooltipData> OnRefresh;
     public void Refresh() => OnRefresh?.Invoke(this);
 }
