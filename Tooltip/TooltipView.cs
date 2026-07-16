@@ -1,19 +1,19 @@
 ﻿using System;
-using UnityEngine;
+using Grimity.MonoBehaviours;
 
 namespace Grimity.Tooltip {
-public abstract class TooltipView : MonoBehaviour {
+public abstract class TooltipView : BetterBehaviour {
     private TooltipData _data;
     public abstract Type DataType { get; }
+
+    private void OnDestroy() {
+        if (_data != null) _data.OnRefresh -= Populate;
+    }
 
     public void Bind(TooltipData data) {
         _data = data;
         _data.OnRefresh += Populate;
         Populate(data);
-    }
-
-    private void OnDestroy() {
-        if (_data != null) _data.OnRefresh -= Populate;
     }
 
     public abstract void Populate(TooltipData data);
