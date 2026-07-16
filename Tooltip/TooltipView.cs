@@ -6,7 +6,8 @@ public abstract class TooltipView : BetterBehaviour {
     private TooltipData _data;
     public abstract Type DataType { get; }
 
-    private void OnDestroy() {
+    protected override void OnDestroyed() {
+        base.OnDestroyed();
         if (_data != null) _data.OnRefresh -= Populate;
     }
 
