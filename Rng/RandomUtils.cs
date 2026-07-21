@@ -1,4 +1,5 @@
-using UnityEngine;
+using Unity.Mathematics;
+using Random = UnityEngine.Random;
 
 namespace Grimity.Rng {
 public static class RandomUtils {
@@ -12,6 +13,10 @@ public static class RandomUtils {
 
     public static float MaybeNegative(this float num) {
         return (Flip() ? 1 : -1) * num;
+    }
+
+    public static float GetRandom(this float2 range) {
+        return Random.Range(range.x, range.y);
     }
 }
 }
