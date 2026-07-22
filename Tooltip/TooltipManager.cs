@@ -11,18 +11,18 @@ public class TooltipManager : MonoBehaviour {
     public static TooltipManager Instance;
     [SerializeField] private List<TooltipView> prefabRegistry;
     [SerializeField] private GameObject TooltipPrefab;
-    [SerializeField] private GameObject TooltipContainer;
+    [SerializeField] public GameObject TooltipContainer;
     [SerializeField] private int horizontalMarginLeft = 5;
     [SerializeField] private int horizontalMarginRight = 5;
     [SerializeField] private int verticalMarginTop = 5;
     [SerializeField] private int verticalMarginBottom = 5;
+    private HorizontalAlignment _horizontalAlignment;
+    private RectTransform _mouseTracker;
+    private Dictionary<Type, TooltipView> _prefabMap;
+    private RectTransform _tooltipContainerRectTransform;
 
     private GameObject _tooltipUi;
     private RectTransform _uiRectTransform;
-    private Dictionary<Type, TooltipView> _prefabMap;
-    private RectTransform _mouseTracker;
-    private RectTransform _tooltipContainerRectTransform;
-    private HorizontalAlignment _horizontalAlignment;
     private VerticalAlignment _verticalAlignment;
 
     private void Awake() {
@@ -33,13 +33,6 @@ public class TooltipManager : MonoBehaviour {
         _tooltipUi = Instantiate(TooltipPrefab, _mouseTracker);
         _uiRectTransform = _tooltipUi.gameObject.GetComponent<RectTransform>();
         HideTooltip();
-    }
-
-    private void SetupMouseTracker() {
-        var mouseTracker = new GameObject("MouseTracker");
-        _mouseTracker = mouseTracker.AddComponent<RectTransform>();
-        _mouseTracker.SetParent(_tooltipContainerRectTransform, false);
-        _mouseTracker.sizeDelta = Vector2.zero;
     }
 
     private void Update() {
@@ -53,6 +46,13 @@ public class TooltipManager : MonoBehaviour {
         );
         _mouseTracker.anchoredPosition = localPoint;
         AdjustForBounds(_horizontalAlignment, _verticalAlignment);
+    }
+
+    private void SetupMouseTracker() {
+        var mouseTracker = new GameObject("MouseTracker");
+        _mouseTracker = mouseTracker.AddComponent<RectTransform>();
+        _mouseTracker.SetParent(_tooltipContainerRectTransform, false);
+        _mouseTracker.sizeDelta = Vector2.zero;
     }
 
     public void ShowTooltip(TooltipData data,
