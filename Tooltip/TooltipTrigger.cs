@@ -6,11 +6,11 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private VerticalAlignment VerticalAlignment;
     [SerializeField] private HorizontalAlignment HorizontalAlignment;
     private TooltipData _data;
-    private bool _isPointerOver;
+    protected bool _isPointerOver;
 
     private TooltipManager _tooltipManager;
 
-    private TooltipManager Manager {
+    protected TooltipManager Manager {
         get {
             if (!_tooltipManager) _tooltipManager = TooltipManager.Instance;
             return _tooltipManager;
@@ -21,7 +21,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (_isPointerOver) Manager.HideTooltip();
     }
 
-    private void OnDestroy() {
+    protected virtual void OnDestroy() {
         _data?.Dispose();
     }
 
@@ -41,7 +41,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         UpdateTooltip();
     }
 
-    private void UpdateTooltip() {
+    protected virtual void UpdateTooltip() {
         if (!_isPointerOver) return;
         if (_data != null) {
             Manager.ShowTooltip(_data, HorizontalAlignment, VerticalAlignment);
