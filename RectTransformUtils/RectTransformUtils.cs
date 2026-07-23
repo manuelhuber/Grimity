@@ -57,5 +57,11 @@ public static class RectTransformUtils {
 
         return new Vector2(overflowX, overflowY);
     }
+
+    public static void NudgeInsideParent(this RectTransform rectTransform) {
+        var overflow = GetWorldSpaceOverflow(rectTransform.parent as RectTransform, rectTransform);
+        var localOverflow = rectTransform.InverseTransformVector(overflow);
+        rectTransform.anchoredPosition += new Vector2(localOverflow.x, localOverflow.y);
+    }
 }
 }
