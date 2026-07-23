@@ -5,6 +5,8 @@ namespace Grimity.Tooltip {
 public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private VerticalAlignment VerticalAlignment;
     [SerializeField] private HorizontalAlignment HorizontalAlignment;
+    [SerializeField] private GameObject target;
+
     private TooltipData _data;
     protected bool _isPointerOver;
 
@@ -44,7 +46,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     protected virtual void UpdateTooltip() {
         if (!_isPointerOver) return;
         if (_data != null) {
-            Manager.ShowTooltip(_data, HorizontalAlignment, VerticalAlignment);
+            Manager.ShowTooltip(_data, HorizontalAlignment, VerticalAlignment, target);
         }
     }
 }

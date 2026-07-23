@@ -59,7 +59,11 @@ public static class RectTransformUtils {
     }
 
     public static void NudgeInsideParent(this RectTransform rectTransform) {
-        var overflow = GetWorldSpaceOverflow(rectTransform.parent as RectTransform, rectTransform);
+        rectTransform.NudgeInside(rectTransform.parent as RectTransform);
+    }
+
+    public static void NudgeInside(this RectTransform rectTransform, RectTransform container) {
+        var overflow = GetWorldSpaceOverflow(container, rectTransform);
         var localOverflow = rectTransform.InverseTransformVector(overflow);
         rectTransform.anchoredPosition += new Vector2(localOverflow.x, localOverflow.y);
     }
