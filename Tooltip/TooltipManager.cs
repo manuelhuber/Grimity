@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Grimity.GameObjects;
-using Grimity.RectTransformUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static Grimity.RectTransformUtils.RectTransformUtils;
 
 namespace Grimity.Tooltip {
 public class TooltipManager : MonoBehaviour {
@@ -16,6 +15,7 @@ public class TooltipManager : MonoBehaviour {
     [SerializeField] private int horizontalMarginRight = 5;
     [SerializeField] private int verticalMarginTop = 5;
     [SerializeField] private int verticalMarginBottom = 5;
+    private TooltipView _activeTooltip;
     private HorizontalAlignment _horizontalAlignment;
     private RectTransform _mouseTracker;
     private Dictionary<Type, TooltipView> _prefabMap;
@@ -68,15 +68,19 @@ public class TooltipManager : MonoBehaviour {
         while (type != null && !_prefabMap.TryGetValue(type, out prefab))
             type = type.BaseType; // fallback up the hierarchy
 
-        _tooltipUi.transform.ClearChildren();
+        if (_activeTooltip) {
+            _activeTooltip.Dispose();
+            Destroy(_activeTooltip.gameObject);
+            _activeTooltip = null;
+        }
 
         if (!prefab) {
             Debug.LogError($"No tooltip prefab found for type {type}");
             return;
         }
 
-        var activeTooltip = Instantiate(prefab, _tooltipUi.transform);
-        activeTooltip.Bind(data);
+        _activeTooltip = Instantiate(prefab, _tooltipUi.transform);
+        _activeTooltip.Bind(data);
         ShowTooltip();
     }
 
@@ -128,54 +132,42 @@ public class TooltipManager : MonoBehaviour {
 
     private void AdjustForBounds(HorizontalAlignment hAlign, VerticalAlignment vAlign) {
         SetAnchor(hAlign, vAlign);
-        var (containerMin, containerMax) = _tooltipContainerRectTransform.GetMinMaxWorldSpace();
-        var (tooltipMin, tooltipMax) = _uiRectTransform.GetMinMaxWorldSpace();
 
+        var overflow = GetWorldSpaceOverflow(_tooltipContainerRectTransform, _uiRectTransform);
+
+        if (overflow is { x: 0f, y: 0f }) return;
+
+        var (tooltipMin, tooltipMax) = _uiRectTransform.GetMinMaxWorldSpace();
         var mousePos = new Vector2(_mouseTracker.position.x, _mouseTracker.position.y);
 
-        var overflowX = 0f;
-        if (tooltipMin.x < containerMin.x) overflowX = containerMin.x - tooltipMin.x;
-        else if (tooltipMax.x > containerMax.x) overflowX = containerMax.x - tooltipMax.x;
-
-        var overflowY = 0f;
-        if (tooltipMin.y < containerMin.y) overflowY = containerMin.y - tooltipMin.y;
-        else if (tooltipMax.y > containerMax.y) overflowY = containerMax.y - tooltipMax.y;
-
-        if (overflowX == 0f && overflowY == 0f) return;
-
-        var correctedMin = new Vector2(tooltipMin.x + overflowX, tooltipMin.y + overflowY);
-        var correctedMax = new Vector2(tooltipMax.x + overflowX, tooltipMax.y + overflowY);
+        var correctedMin = new Vector2(tooltipMin.x + overflow.x, tooltipMin.y + overflow.y);
+        var correctedMax = new Vector2(tooltipMax.x + overflow.x, tooltipMax.y + overflow.y);
 
         var newHAlign = hAlign;
         var newVAlign = vAlign;
 
         // Per-axis: if the clamped position would put the mouse inside the tooltip, flip instead
-        if (overflowX != 0f && hAlign != HorizontalAlignment.Middle) {
+        if (overflow.x != 0f && hAlign != HorizontalAlignment.Middle) {
             var wouldOverlapMouse = mousePos.x >= correctedMin.x && mousePos.x <= correctedMax.x;
-            if (wouldOverlapMouse)
-                newHAlign = hAlign == HorizontalAlignment.Left
-                    ? HorizontalAlignment.Right
-                    : HorizontalAlignment.Left;
+            if (wouldOverlapMouse) newHAlign = hAlign.Flip();
         }
 
-        if (overflowY != 0f && vAlign != VerticalAlignment.Middle) {
+        if (overflow.y != 0f && vAlign != VerticalAlignment.Middle) {
             var wouldOverlapMouse = mousePos.y >= correctedMin.y && mousePos.y <= correctedMax.y;
-            if (wouldOverlapMouse)
-                newVAlign = vAlign == VerticalAlignment.Bottom
-                    ? VerticalAlignment.Top
-                    : VerticalAlignment.Bottom;
+            if (wouldOverlapMouse) newVAlign = vAlign.Flip();
         }
 
         var horizontalFlip = newHAlign != hAlign;
         var verticalFlip = newVAlign != vAlign;
-        overflowX = horizontalFlip ? 0 : overflowX;
-        overflowY = verticalFlip ? 0 : overflowY;
 
         if (horizontalFlip || verticalFlip) {
             SetAnchor(newHAlign, newVAlign);
         }
 
-        var worldCorrection = new Vector3(overflowX, overflowY, 0f);
+        var xNudgeAmount = horizontalFlip ? 0 : overflow.x;
+        var yNudgeAmount = verticalFlip ? 0 : overflow.y;
+
+        var worldCorrection = new Vector3(xNudgeAmount, yNudgeAmount, 0f);
         var localCorrection = _mouseTracker.InverseTransformVector(worldCorrection);
         _uiRectTransform.anchoredPosition += new Vector2(localCorrection.x, localCorrection.y);
     }

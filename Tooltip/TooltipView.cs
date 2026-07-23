@@ -2,13 +2,14 @@
 using Grimity.MonoBehaviours;
 
 namespace Grimity.Tooltip {
-public abstract class TooltipView : BetterBehaviour {
+public abstract class TooltipView : BetterBehaviour, IDisposable {
     private TooltipData _data;
     public abstract Type DataType { get; }
 
-    protected override void OnDestroyed() {
-        base.OnDestroyed();
+    public void Dispose() {
+        // We use Dispose since the View might never be active and thus onDestroy isn't called
         if (_data != null) _data.OnRefresh -= Populate;
+        Cleanup();
     }
 
     public void Bind(TooltipData data) {

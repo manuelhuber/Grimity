@@ -36,5 +36,26 @@ public static class RectTransformUtils {
             corners[2].x - corners[0].x,
             corners[2].y - corners[0].y);
     }
+
+    /// <summary>
+    /// Returns the overflow of the target RectTransform relative to the container RectTransform.
+    /// </summary>
+    /// <param name="container"></param>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    public static Vector2 GetWorldSpaceOverflow(RectTransform container, RectTransform target) {
+        var (containerMin, containerMax) = container.GetMinMaxWorldSpace();
+        var (tooltipMin, tooltipMax) = target.GetMinMaxWorldSpace();
+
+        var overflowX = 0f;
+        if (tooltipMin.x < containerMin.x) overflowX = containerMin.x - tooltipMin.x;
+        else if (tooltipMax.x > containerMax.x) overflowX = containerMax.x - tooltipMax.x;
+
+        var overflowY = 0f;
+        if (tooltipMin.y < containerMin.y) overflowY = containerMin.y - tooltipMin.y;
+        else if (tooltipMax.y > containerMax.y) overflowY = containerMax.y - tooltipMax.y;
+
+        return new Vector2(overflowX, overflowY);
+    }
 }
 }
