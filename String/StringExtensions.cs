@@ -18,5 +18,9 @@ public static class StringExtensions {
     public static string ToSentence(this string s) {
         return string.Concat(s.Select(c => char.IsUpper(c) ? " " + c : c.ToString())).TrimStart(' ');
     }
+
+    public static string Capitalize(this string s) {
+        return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(s);
+    }
 }
 }
