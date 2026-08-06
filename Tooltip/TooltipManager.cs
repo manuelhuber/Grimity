@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Grimity.Data;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static Grimity.RectTransformUtils.RectTransformUtils;
@@ -11,12 +12,10 @@ public class TooltipManager : MonoBehaviour {
 
     [SerializeField] private List<TooltipView> prefabRegistry;
     [SerializeField] public GameObject TooltipContainer;
-    [SerializeField] private int horizontalMarginLeft = 5;
-    [SerializeField] private int horizontalMarginRight = 5;
-    [SerializeField] private int verticalMarginTop = 5;
-    [SerializeField] private int verticalMarginBottom = 5;
+    [SerializeField] private Sides mouseMargins;
     private TooltipView _activeTooltip;
     private HorizontalAlignment _horizontalAlignment;
+    private Sides _margins;
 
     private Dictionary<Type, TooltipView> _prefabMap;
     private RectTransform _tooltipAnchor;
@@ -24,6 +23,7 @@ public class TooltipManager : MonoBehaviour {
     private RectTransform _tooltipContainer;
     private GameObject _trackTarget;
     private VerticalAlignment _verticalAlignment;
+    private bool IsTrackingMouse => !_trackTarget;
 
     private void Awake() {
         Instance = this;
@@ -45,7 +45,7 @@ public class TooltipManager : MonoBehaviour {
     }
 
     private void UpdateAnchorPosition() {
-        var screenPos = _trackTarget ? GetScreenPos(_trackTarget) : Mouse.current.position.ReadValue();
+        var screenPos = IsTrackingMouse ? Mouse.current.position.ReadValue() : GetScreenPos(_trackTarget);
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             _tooltipContainer,
             screenPos,
@@ -82,7 +82,9 @@ public class TooltipManager : MonoBehaviour {
     public void ShowTooltip(TooltipData data,
         HorizontalAlignment horizontalAlignment,
         VerticalAlignment verticalAlignment,
-        GameObject trackTarget = null) {
+        GameObject trackTarget = null,
+        Sides margins = default) {
+        _margins = margins;
         _trackTarget = trackTarget;
         _horizontalAlignment = horizontalAlignment;
         _verticalAlignment = verticalAlignment;
@@ -116,19 +118,20 @@ public class TooltipManager : MonoBehaviour {
 
     private void SetAnchor(HorizontalAlignment horizontalAlignment,
         VerticalAlignment verticalAlignment) {
+        var margins = IsTrackingMouse ? mouseMargins : _margins;
         var anchorX = horizontalAlignment.GetAnchor();
         var anchorY = verticalAlignment.GetAnchor();
         var pivotX = horizontalAlignment.GetPivot();
         var pivotY = verticalAlignment.GetPivot();
         var posX = horizontalAlignment switch {
-            HorizontalAlignment.Left => -horizontalMarginLeft,
+            HorizontalAlignment.Left => -margins.Left,
             HorizontalAlignment.Middle => 0,
-            HorizontalAlignment.Right => horizontalMarginRight,
+            HorizontalAlignment.Right => margins.Right,
         };
         var posY = verticalAlignment switch {
-            VerticalAlignment.Bottom => -verticalMarginBottom,
+            VerticalAlignment.Bottom => -margins.Bottom,
             VerticalAlignment.Middle => 0,
-            VerticalAlignment.Top => verticalMarginTop,
+            VerticalAlignment.Top => margins.Top,
         };
         var rectTransform = _activeTooltip.transform as RectTransform;
         rectTransform.anchorMax = new Vector2(anchorX, anchorY);

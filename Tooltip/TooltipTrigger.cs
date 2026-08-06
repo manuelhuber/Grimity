@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Grimity.Data;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Grimity.Tooltip {
@@ -6,6 +7,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private VerticalAlignment VerticalAlignment;
     [SerializeField] private HorizontalAlignment HorizontalAlignment;
     [SerializeField] private GameObject target;
+    [SerializeField] private Sides targetMargins;
 
     private TooltipData _data;
     protected bool _isPointerOver;
@@ -46,7 +48,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     protected virtual void UpdateTooltip() {
         if (!_isPointerOver) return;
         if (_data != null) {
-            Manager.ShowTooltip(_data, HorizontalAlignment, VerticalAlignment, target);
+            Manager.ShowTooltip(_data, HorizontalAlignment, VerticalAlignment, target, targetMargins);
         }
     }
 }
