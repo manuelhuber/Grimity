@@ -5,10 +5,18 @@ using UnityEngine;
 namespace Grimity.MonoBehaviours {
 public abstract class BetterBehaviour : MonoBehaviour {
     private readonly List<Action> _cleanup = new();
+    private bool _destroyed;
+
+    private void OnDestroy() {
+        Destroy();
+    }
+
     protected void RegisterCleanup(Action action) => _cleanup.Add(action);
     protected void RegisterCleanup(IDisposable disposable) => _cleanup.Add(disposable.Dispose);
 
-    private void OnDestroy() {
+    private void Destroy() {
+        if (_destroyed) return;
+        _destroyed = true;
         Cleanup();
         OnDestroyed();
     }
@@ -27,6 +35,11 @@ public abstract class BetterBehaviour : MonoBehaviour {
     }
 
     protected virtual void OnDestroyed() {
+    }
+
+    public void DestroyGameObject() {
+        Destroy(gameObject);
+        Destroy();
     }
 }
 }
