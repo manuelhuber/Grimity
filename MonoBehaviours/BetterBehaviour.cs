@@ -11,8 +11,8 @@ public abstract class BetterBehaviour : MonoBehaviour {
         Destroy();
     }
 
-    protected void RegisterCleanup(Action action) => _cleanup.Add(action);
-    protected void RegisterCleanup(IDisposable disposable) => _cleanup.Add(disposable.Dispose);
+    public void RegisterCleanup(Action action) => _cleanup.Add(action);
+    public void RegisterCleanup(IDisposable disposable) => _cleanup.Add(disposable.Dispose);
 
     private void Destroy() {
         if (_destroyed) return;

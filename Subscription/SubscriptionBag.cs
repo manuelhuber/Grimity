@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Grimity.MonoBehaviours;
 
 namespace Grimity.Subscription {
 public class SubscriptionBag {
@@ -20,6 +21,11 @@ public static class SubscriptionBagUtils {
 
     public static void AddTo(this IDisposable disposable, SubscriptionBag bag) {
         bag.RegisterCleanup(disposable);
+    }
+
+    public static SubscriptionBag AddTo(this SubscriptionBag bag, BetterBehaviour behaviour) {
+        behaviour.RegisterCleanup(bag.Cleanup);
+        return bag;
     }
 }
 }
