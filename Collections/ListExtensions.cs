@@ -41,5 +41,10 @@ public static class CollectionExtensions {
         Array.Fill(x, value);
         return x;
     }
+
+    public static T[] Resize<T>(this T[] array, int size) {
+        Array.Resize(ref array, size);
+        return array;
+    }
 }
 }
