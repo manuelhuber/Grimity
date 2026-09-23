@@ -7,12 +7,23 @@ public abstract class BetterBehaviour : MonoBehaviour {
     private readonly List<Action> _cleanup = new();
     private bool _destroyed;
 
-    private void OnDestroy() {
+    protected virtual void OnDestroy() {
         Destroy();
     }
 
-    public void RegisterCleanup(Action action) => _cleanup.Add(action);
-    public void RegisterCleanup(IDisposable disposable) => _cleanup.Add(disposable.Dispose);
+    public void RegisterCleanup(Action action) {
+        WarnIfCleanupRegisteredBeforeAwake();
+        _cleanup.Add(action);
+    }
+
+    public void RegisterCleanup(IDisposable disposable) {
+        WarnIfCleanupRegisteredBeforeAwake();
+        _cleanup.Add(disposable.Dispose);
+    }
+
+    private void WarnIfCleanupRegisteredBeforeAwake() {
+        if (!didAwake) Debug.LogWarning($"{name}: cleanup registered before Awake! CLEANUP NOT GUARANTEED", this);
+    }
 
     private void Destroy() {
         if (_destroyed) return;

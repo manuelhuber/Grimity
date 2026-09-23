@@ -6,6 +6,16 @@ public abstract class TooltipView : BetterBehaviour, IDisposable {
     private TooltipData _data;
     public abstract Type DataType { get; }
 
+    private void OnEnable() {
+        if (_data == null) return;
+        _data.OnRefresh += Populate;
+        Populate(_data);
+    }
+
+    private void OnDisable() {
+        if (_data != null) _data.OnRefresh -= Populate;
+    }
+
     public void Dispose() {
         // We use Dispose since the View might never be active and thus onDestroy isn't called
         if (_data != null) _data.OnRefresh -= Populate;
@@ -13,7 +23,9 @@ public abstract class TooltipView : BetterBehaviour, IDisposable {
     }
 
     public void Bind(TooltipData data) {
+        if (_data != null) _data.OnRefresh -= Populate;
         _data = data;
+        if (!isActiveAndEnabled) return;
         _data.OnRefresh += Populate;
         Populate(data);
     }
