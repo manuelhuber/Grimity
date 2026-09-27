@@ -23,11 +23,13 @@ public class TooltipManager : MonoBehaviour {
     private RectTransform _tooltipContainer;
     private GameObject _trackTarget;
     private VerticalAlignment _verticalAlignment;
+    private Camera _worldCamera;
     private bool IsTrackingMouse => !_trackTarget;
 
     private void Awake() {
         Instance = this;
         _tooltipContainer = TooltipContainer.GetComponent<RectTransform>();
+        _worldCamera = _tooltipContainer.GetComponentInParent<Canvas>()?.worldCamera;
         SetupAnchor();
         _prefabMap = prefabRegistry.ToDictionary(v => v.DataType, v => v);
     }
@@ -49,7 +51,7 @@ public class TooltipManager : MonoBehaviour {
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             _tooltipContainer,
             screenPos,
-            null,
+            _worldCamera,
             out var localPoint
         );
         _tooltipAnchor.anchoredPosition = localPoint;
