@@ -66,19 +66,22 @@ public class TooltipManager : MonoBehaviour {
         }
 
         var (min, max) = rectTransform.GetMinMaxWorldSpace();
-        var y = _verticalAlignment switch {
+        var worldY = _verticalAlignment switch {
             VerticalAlignment.Top => max.y,
             VerticalAlignment.Middle => (max.y + min.y) / 2,
             VerticalAlignment.Bottom => min.y,
             _ => throw new ArgumentOutOfRangeException()
         };
-        var x = _horizontalAlignment switch {
+        var worldX = _horizontalAlignment switch {
             HorizontalAlignment.Left => min.x,
             HorizontalAlignment.Middle => (max.x + min.x) / 2,
             HorizontalAlignment.Right => max.x,
             _ => throw new ArgumentOutOfRangeException()
         };
-        return new Vector2(x, y);
+        return RectTransformUtility.WorldToScreenPoint(
+            _worldCamera,
+            new Vector3(worldX, worldY, rectTransform.position.z)
+        );
     }
 
     public void ShowTooltip(TooltipData data,
