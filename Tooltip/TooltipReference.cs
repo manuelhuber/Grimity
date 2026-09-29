@@ -8,9 +8,6 @@ public enum TooltipReference {
     Self,
 
     /// <summary>Another rect, set on the trigger.</summary>
-    Rect,
-
-    /// <summary>The first <see cref="TooltipAnchor"/> in the trigger's parents, using the anchor's placement.</summary>
-    ParentAnchor
+    Rect
 }
 }

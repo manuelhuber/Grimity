@@ -14,6 +14,9 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField, LabelText("$" + nameof(PlacementLabel))]
     private PlacementConfig placement = PlacementConfig.Cursor;
 
+    [Tooltip("Use the first TooltipAnchor in the parents instead of the reference and placement above, if there is one")]
+    [SerializeField] private bool useParentAnchor;
+
     // Old alignment settings, converted into the fields above by MigrateLegacyPlacement
     [SerializeField, HideInInspector] private VerticalAlignment VerticalAlignment;
     [SerializeField, HideInInspector] private HorizontalAlignment HorizontalAlignment;
@@ -33,8 +36,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    private string PlacementLabel =>
-        reference == TooltipReference.ParentAnchor ? "Placement (without anchor)" : "Placement";
+    private string PlacementLabel => useParentAnchor ? "Placement (without anchor)" : "Placement";
 
     public TooltipReference Reference {
         get => reference;
@@ -59,6 +61,15 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         get => placement;
         set {
             placement = value;
+            UpdateTooltip();
+        }
+    }
+
+    /// <summary>Whether a <see cref="TooltipAnchor"/> in the parents overrides the reference and placement.</summary>
+    public bool UseParentAnchor {
+        get => useParentAnchor;
+        set {
+            useParentAnchor = value;
             UpdateTooltip();
         }
     }
@@ -112,19 +123,16 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     /// <summary>The placement and reference rect to use; a null rect means the mouse.</summary>
     public (PlacementConfig config, RectTransform reference) ResolvePlacement() {
-        switch (reference) {
-            case TooltipReference.Mouse:
-                return (placement, null);
-            case TooltipReference.Rect:
-                if (referenceRect) return (placement, referenceRect);
-                break;
-            case TooltipReference.ParentAnchor:
-                var anchor = GetComponentInParent<TooltipAnchor>();
-                if (anchor) return (anchor.Placement, anchor.RectTransform);
-                break;
+        if (useParentAnchor) {
+            var anchor = GetComponentInParent<TooltipAnchor>();
+            if (anchor) return (anchor.Placement, anchor.RectTransform);
         }
 
-        return (placement, (RectTransform)transform);
+        return reference switch {
+            TooltipReference.Mouse => (placement, null),
+            TooltipReference.Rect when referenceRect => (placement, referenceRect),
+            _ => (placement, (RectTransform)transform)
+        };
     }
 
     /// <summary>

@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Grimity.Tooltip {
 /// <summary>
-/// Shared position for the tooltips of all <see cref="TooltipTrigger"/>s below it that use
-/// <see cref="TooltipReference.ParentAnchor"/>: their tooltips are placed next to this rect instead of the trigger,
-/// so e.g. every slot in a row shows its tooltip in the same spot.
+/// Shared position for the tooltips of all <see cref="TooltipTrigger"/>s below it that have
+/// <see cref="TooltipTrigger.UseParentAnchor"/> set: their tooltips are placed next to this rect with this placement,
+/// so e.g. every slot in a row shows its tooltip in the same spot. The closest anchor in the parents wins.
 /// </summary>
 [RequireComponent(typeof(RectTransform))]
 public class TooltipAnchor : MonoBehaviour {
