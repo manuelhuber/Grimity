@@ -118,7 +118,7 @@ public class TooltipManager : MonoBehaviour {
     }
 
     public void HideTooltip() {
-        _activeTooltip?.gameObject.SetActive(false);
+        if (_activeTooltip) _activeTooltip.gameObject.SetActive(false);
     }
 
     private void SetAnchor(HorizontalAlignment horizontalAlignment,
