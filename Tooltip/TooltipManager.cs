@@ -69,19 +69,6 @@ public class TooltipManager : MonoBehaviour {
         UpdatePosition();
     }
 
-    /// <summary>Old alignment API; kept until all triggers use <see cref="PlacementConfig"/>.</summary>
-    public void ShowTooltip(TooltipData data,
-        HorizontalAlignment horizontalAlignment,
-        VerticalAlignment verticalAlignment,
-        GameObject trackTarget = null,
-        Sides margins = default) {
-        var reference = trackTarget ? trackTarget.transform as RectTransform : null;
-        var config = LegacyAlignment.ToPlacementConfig(horizontalAlignment,
-            verticalAlignment,
-            reference ? margins : default);
-        ShowTooltip(data, config, reference);
-    }
-
     public void HideTooltip() {
         _activeTooltip?.gameObject.SetActive(false);
     }
