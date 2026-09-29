@@ -17,5 +17,11 @@ public class TooltipAnchor : MonoBehaviour {
     }
 
     public RectTransform RectTransform => (RectTransform)transform;
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected() {
+        Positioning.Editor.PlacementGizmos.Draw(RectTransform, placement);
+    }
+#endif
 }
 }

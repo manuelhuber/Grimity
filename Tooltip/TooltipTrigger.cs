@@ -79,6 +79,13 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         MigrateLegacyPlacement();
     }
 
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected() {
+        var (config, rect) = ResolvePlacement();
+        Positioning.Editor.PlacementGizmos.Draw(rect, config);
+    }
+#endif
+
     public void OnPointerEnter(PointerEventData eventData) {
         _isPointerOver = true;
         UpdateTooltip();
