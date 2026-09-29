@@ -1,4 +1,3 @@
-using Grimity.Data;
 using Grimity.Positioning;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -16,13 +15,6 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     [Tooltip("Use the first TooltipAnchor in the parents instead of the reference and placement above, if there is one")]
     [SerializeField] private bool useParentAnchor;
-
-    // Old alignment settings, converted into the fields above by MigrateLegacyPlacement
-    [SerializeField, HideInInspector] private VerticalAlignment VerticalAlignment;
-    [SerializeField, HideInInspector] private HorizontalAlignment HorizontalAlignment;
-    [SerializeField, HideInInspector] private GameObject target;
-    [SerializeField, HideInInspector] private Sides targetMargins;
-    [SerializeField, HideInInspector] private bool legacyPlacementMigrated;
 
     private TooltipData _data;
     protected bool _isPointerOver;
@@ -74,20 +66,12 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    protected virtual void Awake() {
-        MigrateLegacyPlacement();
-    }
-
     private void OnDisable() {
         if (_isPointerOver) Manager.HideTooltip();
     }
 
     protected virtual void OnDestroy() {
         _data?.Dispose();
-    }
-
-    private void OnValidate() {
-        MigrateLegacyPlacement();
     }
 
 #if UNITY_EDITOR
@@ -133,28 +117,6 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             TooltipReference.Rect when referenceRect => (placement, referenceRect),
             _ => (placement, (RectTransform)transform)
         };
-    }
-
-    /// <summary>
-    /// Converts the old Vertical/HorizontalAlignment settings, once. Runs on load, so prefabs that haven't been
-    /// re-saved since still work; returns whether anything changed.
-    /// </summary>
-    public bool MigrateLegacyPlacement() {
-        if (legacyPlacementMigrated) return false;
-        legacyPlacementMigrated = true;
-        var targetRect = target ? target.transform as RectTransform : null;
-        if (!targetRect) {
-            // Mouse tooltips got their gap from the manager, which still applies it around the cursor
-            reference = TooltipReference.Mouse;
-            placement = LegacyAlignment.ToPlacementConfig(HorizontalAlignment, VerticalAlignment);
-        } else {
-            reference = targetRect == transform ? TooltipReference.Self : TooltipReference.Rect;
-            referenceRect = reference == TooltipReference.Rect ? targetRect : null;
-            placement = LegacyAlignment.ToPlacementConfig(HorizontalAlignment, VerticalAlignment, targetMargins);
-        }
-
-        target = null;
-        return true;
     }
 }
 }
