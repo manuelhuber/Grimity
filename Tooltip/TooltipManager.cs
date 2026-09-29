@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Grimity.Data;
+using Grimity.Positioning;
+using Grimity.RectTransformUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static Grimity.RectTransformUtils.RectTransformUtils;
 
 namespace Grimity.Tooltip {
 public class TooltipManager : MonoBehaviour {
@@ -12,87 +13,38 @@ public class TooltipManager : MonoBehaviour {
 
     [SerializeField] private List<TooltipView> prefabRegistry;
     [SerializeField] public GameObject TooltipContainer;
+
+    [Tooltip("Area around the mouse hotspot that tooltips following the mouse keep clear of, e.g. the cursor sprite")]
     [SerializeField] private Sides mouseMargins;
+
     private TooltipView _activeTooltip;
-    private HorizontalAlignment _horizontalAlignment;
-    private Sides _margins;
+    private PlacementConfig _config;
+
+    /// <summary>Placement last used for a rect reference; kept while it fits so the tooltip doesn't jump.</summary>
+    private Placement? _currentPlacement;
 
     private Dictionary<Type, TooltipView> _prefabMap;
-    private RectTransform _tooltipAnchor;
-
+    private RectTransform _reference;
     private RectTransform _tooltipContainer;
-    private GameObject _trackTarget;
-    private VerticalAlignment _verticalAlignment;
-    private Camera _worldCamera;
-    private bool IsTrackingMouse => !_trackTarget;
+
+    private bool IsTrackingMouse => !_reference;
 
     private void Awake() {
         Instance = this;
         _tooltipContainer = TooltipContainer.GetComponent<RectTransform>();
-        _worldCamera = _tooltipContainer.GetComponentInParent<Canvas>()?.worldCamera;
-        SetupAnchor();
         _prefabMap = prefabRegistry.ToDictionary(v => v.DataType, v => v);
     }
 
-    private void Update() {
+    private void LateUpdate() {
         if (!_activeTooltip || !_activeTooltip.isActiveAndEnabled) return;
-        UpdateAnchorPosition();
+        UpdatePosition();
     }
 
-    private void SetupAnchor() {
-        var mouseTracker = new GameObject("TooltipAnchor");
-        _tooltipAnchor = mouseTracker.AddComponent<RectTransform>();
-        _tooltipAnchor.SetParent(_tooltipContainer, false);
-        _tooltipAnchor.sizeDelta = Vector2.zero;
-    }
-
-    private void UpdateAnchorPosition() {
-        var screenPos = IsTrackingMouse ? Mouse.current.position.ReadValue() : GetScreenPos(_trackTarget);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            _tooltipContainer,
-            screenPos,
-            _worldCamera,
-            out var localPoint
-        );
-        _tooltipAnchor.anchoredPosition = localPoint;
-        AdjustForBounds(_horizontalAlignment, _verticalAlignment);
-    }
-
-    private Vector2 GetScreenPos(GameObject target) {
-        var rectTransform = target.transform as RectTransform;
-        if (!rectTransform) {
-            Debug.LogError("Tracking non RectTransform not yet implemented");
-            return Vector2.zero;
-        }
-
-        var (min, max) = rectTransform.GetMinMaxWorldSpace();
-        var worldY = _verticalAlignment switch {
-            VerticalAlignment.Top => max.y,
-            VerticalAlignment.Middle => (max.y + min.y) / 2,
-            VerticalAlignment.Bottom => min.y,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        var worldX = _horizontalAlignment switch {
-            HorizontalAlignment.Left => min.x,
-            HorizontalAlignment.Middle => (max.x + min.x) / 2,
-            HorizontalAlignment.Right => max.x,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        return RectTransformUtility.WorldToScreenPoint(
-            _worldCamera,
-            new Vector3(worldX, worldY, rectTransform.position.z)
-        );
-    }
-
-    public void ShowTooltip(TooltipData data,
-        HorizontalAlignment horizontalAlignment,
-        VerticalAlignment verticalAlignment,
-        GameObject trackTarget = null,
-        Sides margins = default) {
-        _margins = margins;
-        _trackTarget = trackTarget;
-        _horizontalAlignment = horizontalAlignment;
-        _verticalAlignment = verticalAlignment;
+    /// <summary>Shows a tooltip next to <paramref name="reference"/>, or next to the mouse if it is null.</summary>
+    public void ShowTooltip(TooltipData data, PlacementConfig config, RectTransform reference = null) {
+        _config = config;
+        _reference = reference;
+        _currentPlacement = null;
         var type = data.GetType();
         TooltipView prefab = null;
         while (type != null && !_prefabMap.TryGetValue(type, out prefab))
@@ -105,92 +57,55 @@ public class TooltipManager : MonoBehaviour {
         }
 
         if (!prefab) {
-            Debug.LogError($"No tooltip prefab found for type {type}");
+            Debug.LogError($"No tooltip prefab found for type {data.GetType()}");
             return;
         }
 
-        _activeTooltip = Instantiate(prefab, _tooltipAnchor);
+        _activeTooltip = Instantiate(prefab, _tooltipContainer);
+        var rectTransform = (RectTransform)_activeTooltip.transform;
+        rectTransform.anchorMin = rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         _activeTooltip.Bind(data);
-        SetAnchor(_horizontalAlignment, _verticalAlignment);
-        UpdateAnchorPosition();
         Canvas.ForceUpdateCanvases(); // flush layout so rect sizes are accurate
-        AdjustForBounds(_horizontalAlignment, _verticalAlignment);
+        UpdatePosition();
+    }
+
+    /// <summary>Old alignment API; kept until all triggers use <see cref="PlacementConfig"/>.</summary>
+    public void ShowTooltip(TooltipData data,
+        HorizontalAlignment horizontalAlignment,
+        VerticalAlignment verticalAlignment,
+        GameObject trackTarget = null,
+        Sides margins = default) {
+        var reference = trackTarget ? trackTarget.transform as RectTransform : null;
+        var config = LegacyAlignment.ToPlacementConfig(horizontalAlignment,
+            verticalAlignment,
+            reference ? margins : default);
+        ShowTooltip(data, config, reference);
     }
 
     public void HideTooltip() {
-        if (_activeTooltip) _activeTooltip.gameObject.SetActive(false);
+        _activeTooltip?.gameObject.SetActive(false);
     }
 
-    private void SetAnchor(HorizontalAlignment horizontalAlignment,
-        VerticalAlignment verticalAlignment) {
-        var margins = IsTrackingMouse ? mouseMargins : _margins;
-        var anchorX = horizontalAlignment.GetAnchor();
-        var anchorY = verticalAlignment.GetAnchor();
-        var pivotX = horizontalAlignment.GetPivot();
-        var pivotY = verticalAlignment.GetPivot();
-        var posX = horizontalAlignment switch {
-            HorizontalAlignment.Left => -margins.Left,
-            HorizontalAlignment.Middle => 0,
-            HorizontalAlignment.Right => margins.Right,
-        };
-        var posY = verticalAlignment switch {
-            VerticalAlignment.Bottom => -margins.Bottom,
-            VerticalAlignment.Middle => 0,
-            VerticalAlignment.Top => margins.Top,
-        };
-        var rectTransform = _activeTooltip.transform as RectTransform;
-        rectTransform.anchorMax = new Vector2(anchorX, anchorY);
-        rectTransform.anchorMin = new Vector2(anchorX, anchorY);
-        rectTransform.pivot = new Vector2(pivotX, pivotY);
-        rectTransform.anchoredPosition = new Vector2(posX, posY);
-    }
-
-    private void AdjustForBounds(HorizontalAlignment hAlign, VerticalAlignment vAlign) {
-        if (_trackTarget) {
-            (_activeTooltip.transform as RectTransform).NudgeInside(_tooltipContainer);
+    private void UpdatePosition() {
+        var tooltip = (RectTransform)_activeTooltip.transform;
+        if (IsTrackingMouse) {
+            // Solved from the preferred placement every frame, so it flips back once there's room again
+            tooltip.PlaceNextTo(GetMouseRect(), _tooltipContainer, _config);
             return;
         }
 
-        SetAnchor(hAlign, vAlign);
+        var reference = _reference.GetRectIn(_tooltipContainer);
+        _currentPlacement = tooltip.PlaceNextTo(reference, _tooltipContainer, _config, _currentPlacement).Placement;
+    }
 
-        var activeTooltipTransform = _activeTooltip.transform as RectTransform;
-        var overflow = GetWorldSpaceOverflow(_tooltipContainer, activeTooltipTransform);
-
-        if (overflow is { x: 0f, y: 0f }) return;
-
-        var (tooltipMin, tooltipMax) = activeTooltipTransform.GetMinMaxWorldSpace();
-
-        var mousePos = new Vector2(_tooltipAnchor.position.x, _tooltipAnchor.position.y);
-        var correctedMin = new Vector2(tooltipMin.x + overflow.x, tooltipMin.y + overflow.y);
-        var correctedMax = new Vector2(tooltipMax.x + overflow.x, tooltipMax.y + overflow.y);
-
-        var newHAlign = hAlign;
-        var newVAlign = vAlign;
-
-        // Per-axis: if the clamped position would put the mouse inside the tooltip, flip instead
-        if (overflow.x != 0f && hAlign != HorizontalAlignment.Middle) {
-            var wouldOverlapMouse = mousePos.x >= correctedMin.x && mousePos.x <= correctedMax.x;
-            if (wouldOverlapMouse) newHAlign = hAlign.Flip();
-        }
-
-        if (overflow.y != 0f && vAlign != VerticalAlignment.Middle) {
-            var wouldOverlapMouse = mousePos.y >= correctedMin.y && mousePos.y <= correctedMax.y;
-            if (wouldOverlapMouse) newVAlign = vAlign.Flip();
-        }
-
-        var horizontalFlip = newHAlign != hAlign;
-        var verticalFlip = newVAlign != vAlign;
-
-        if (horizontalFlip || verticalFlip) {
-            SetAnchor(newHAlign, newVAlign);
-        }
-
-        var xNudgeAmount = horizontalFlip ? 0 : overflow.x;
-        var yNudgeAmount = verticalFlip ? 0 : overflow.y;
-
-        var worldCorrection = new Vector3(xNudgeAmount, yNudgeAmount, 0f);
-        var localCorrection = _tooltipAnchor.InverseTransformVector(worldCorrection);
-        activeTooltipTransform.anchoredPosition += new Vector2(localCorrection.x, localCorrection.y);
+    private Rect GetMouseRect() {
+        var mouse = _tooltipContainer.ScreenToLocal(Mouse.current.position.ReadValue());
+        return Rect.MinMaxRect(
+            mouse.x - mouseMargins.Left,
+            mouse.y - mouseMargins.Bottom,
+            mouse.x + mouseMargins.Right,
+            mouse.y + mouseMargins.Top
+        );
     }
 }
 }

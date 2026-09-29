@@ -67,5 +67,45 @@ public static class RectTransformUtils {
         var localOverflow = rectTransform.InverseTransformVector(overflow);
         rectTransform.anchoredPosition += new Vector2(localOverflow.x, localOverflow.y);
     }
+
+    /// <summary>Camera to use for screen conversions of UI under this transform; null for overlay canvases.</summary>
+    public static Camera GetCanvasCamera(this Transform transform) {
+        var canvas = transform.GetComponentInParent<Canvas>();
+        if (!canvas) return null;
+        canvas = canvas.rootCanvas;
+        return canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+    }
+
+    /// <summary>
+    /// The bounds of this rect in the local space of <paramref name="space"/> (relative to its pivot, like
+    /// <see cref="RectTransform.rect"/>). Goes through screen space, so both may live on different canvases.
+    /// </summary>
+    public static Rect GetRectIn(this RectTransform rectTransform, RectTransform space) {
+        var corners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+        var sourceCamera = rectTransform.GetCanvasCamera();
+        var spaceCamera = space.GetCanvasCamera();
+        var min = new Vector2(float.MaxValue, float.MaxValue);
+        var max = new Vector2(float.MinValue, float.MinValue);
+        foreach (var corner in corners) {
+            var screenPoint = RectTransformUtility.WorldToScreenPoint(sourceCamera, corner);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(space, screenPoint, spaceCamera, out var local);
+            min = Vector2.Min(min, local);
+            max = Vector2.Max(max, local);
+        }
+
+        return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+    }
+
+    /// <summary>Screen point in the local space of this rect (relative to its pivot).</summary>
+    public static Vector2 ScreenToLocal(this RectTransform rectTransform, Vector2 screenPoint) {
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            rectTransform,
+            screenPoint,
+            rectTransform.GetCanvasCamera(),
+            out var local
+        );
+        return local;
+    }
 }
 }
