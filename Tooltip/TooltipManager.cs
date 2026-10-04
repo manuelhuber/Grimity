@@ -15,7 +15,8 @@ public class TooltipManager : MonoBehaviour {
     [SerializeField] public GameObject TooltipContainer;
 
     [Tooltip("Area around the mouse hotspot that tooltips following the mouse keep clear of, e.g. the cursor sprite")]
-    [SerializeField] private Sides mouseMargins;
+    [SerializeField]
+    private Sides mouseMargins;
 
     private TooltipView _activeTooltip;
     private PlacementConfig _config;
@@ -70,7 +71,7 @@ public class TooltipManager : MonoBehaviour {
     }
 
     public void HideTooltip() {
-        _activeTooltip?.gameObject.SetActive(false);
+        if (_activeTooltip) _activeTooltip.gameObject.SetActive(false);
     }
 
     private void UpdatePosition() {
