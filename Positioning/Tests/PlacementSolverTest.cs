@@ -28,6 +28,29 @@ public class PlacementSolverTest {
         Assert.AreEqual(new Rect(x, y, Size.x, Size.y), rect);
     }
 
+    // Reference spans 45..55 on both axes, the placed rect is 20 x 10
+    [TestCase(Side.Top, Align.Center, Align.End, 30, 55)]
+    [TestCase(Side.Top, Align.End, Align.Start, 55, 55)]
+    [TestCase(Side.Bottom, Align.Start, Align.End, 25, 35)]
+    [TestCase(Side.Left, Align.Center, Align.Start, 25, 40)]
+    [TestCase(Side.Right, Align.Start, Align.End, 55, 55)]
+    public void Place_AlignsDifferentPointsOfBothEdges(Side side,
+        Align referenceAlign,
+        Align align,
+        float x,
+        float y) {
+        var rect = PlacementSolver.Place(RefAt(45, 45), Size, new Placement(side, referenceAlign, align), 0);
+        Assert.AreEqual(new Rect(x, y, Size.x, Size.y), rect);
+    }
+
+    [Test]
+    public void Flip_KeepsBothAlignments() {
+        var config = new PlacementConfig(new Placement(Side.Bottom, Align.Center, Align.End));
+        var result = PlacementSolver.Solve(RefAt(45, 5), Size, Bounds, config);
+        Assert.AreEqual(new Placement(Side.Top, Align.Center, Align.End), result.Placement);
+        Assert.AreEqual(new Rect(30, 15, 20, 10), result.Rect);
+    }
+
     [Test]
     public void Place_VerticalAlignOnTallReference() {
         var reference = RefAt(45, 20, 10, 60);

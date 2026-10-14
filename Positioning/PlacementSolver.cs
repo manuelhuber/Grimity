@@ -63,23 +63,28 @@ public static class PlacementSolver {
     /// <summary>The rect at the given placement, ignoring bounds.</summary>
     public static Rect Place(Rect reference, Vector2 size, Placement placement, float offset) {
         float Along(float min, float max, float length) {
-            return placement.Align switch {
-                Align.Start => min,
-                Align.Center => (min + max - length) / 2f,
-                _ => max - length
-            };
+            var referencePoint = Mathf.Lerp(min, max, placement.ReferenceAlign.NormalizedPosition());
+            return referencePoint - placement.Align.NormalizedPosition() * length;
         }
 
         return placement.Side switch {
-            Side.Top => new Rect(Along(reference.xMin, reference.xMax, size.x), reference.yMax + offset, size.x,
+            Side.Top => new Rect(Along(reference.xMin, reference.xMax, size.x),
+                reference.yMax + offset,
+                size.x,
                 size.y),
             Side.Bottom => new Rect(Along(reference.xMin, reference.xMax, size.x),
-                reference.yMin - offset - size.y, size.x, size.y),
+                reference.yMin - offset - size.y,
+                size.x,
+                size.y),
             // Start is the top edge, so align from the top down
             Side.Left => new Rect(reference.xMin - offset - size.x,
-                reference.yMax - size.y - Along(0, reference.height, size.y), size.x, size.y),
-            _ => new Rect(reference.xMax + offset, reference.yMax - size.y - Along(0, reference.height, size.y),
-                size.x, size.y)
+                reference.yMax - size.y - Along(0, reference.height, size.y),
+                size.x,
+                size.y),
+            _ => new Rect(reference.xMax + offset,
+                reference.yMax - size.y - Along(0, reference.height, size.y),
+                size.x,
+                size.y)
         };
     }
 

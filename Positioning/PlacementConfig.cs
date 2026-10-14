@@ -47,8 +47,8 @@ public class PlacementConfig {
         return copy;
     }
 
-    public PlacementConfig OrAbove() => Or(new Placement(Side.Top, Preferred.Align));
-    public PlacementConfig OrBelow() => Or(new Placement(Side.Bottom, Preferred.Align));
+    public PlacementConfig OrAbove() => Or(new Placement(Side.Top, Preferred.ReferenceAlign, Preferred.Align));
+    public PlacementConfig OrBelow() => Or(new Placement(Side.Bottom, Preferred.ReferenceAlign, Preferred.Align));
 
     public PlacementConfig WithFallback(FallbackMode fallback) {
         var copy = Copy();
@@ -62,8 +62,12 @@ public class PlacementConfig {
         return copy;
     }
 
-    public PlacementConfig WithAlign(Align align) {
+    /// <summary>Lines up the same points of both edges; see <see cref="Placement(Side, Align)"/>.</summary>
+    public PlacementConfig WithAlign(Align align) => WithAlign(align, align);
+
+    public PlacementConfig WithAlign(Align referenceAlign, Align align) {
         var copy = Copy();
+        copy.Preferred.ReferenceAlign = referenceAlign;
         copy.Preferred.Align = align;
         return copy;
     }
@@ -86,7 +90,8 @@ public class PlacementConfig {
                 break;
             case FallbackMode.Auto:
                 foreach (Side side in System.Enum.GetValues(typeof(Side))) {
-                    if (side != Preferred.Side) yield return new Placement(side, Preferred.Align);
+                    if (side != Preferred.Side)
+                        yield return new Placement(side, Preferred.ReferenceAlign, Preferred.Align);
                 }
 
                 break;
