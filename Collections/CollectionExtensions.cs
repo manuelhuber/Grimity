@@ -42,6 +42,15 @@ public static class CollectionExtensions {
         return x;
     }
 
+    public static T[] PrefilledArray<T>(int size, Func<T> valueGenerator) {
+        var x = new T[size];
+        for (var i = 0; i < x.Length; i++) {
+            x[i] = valueGenerator();
+        }
+
+        return x;
+    }
+
     public static T[] Resize<T>(this T[] array, int size, T value) {
         return array.Resize(size, () => value);
     }
@@ -49,10 +58,10 @@ public static class CollectionExtensions {
     public static T[] Resize<T>(this T[] array, int size, Func<T> valueGenerator = null) {
         var originalSize = array?.Length ?? 0;
         Array.Resize(ref array, size);
-        if (valueGenerator != null) {
-            for (var i = originalSize; i < size - 1; i++) {
-                array[i] = valueGenerator();
-            }
+        if (valueGenerator == null) return array;
+
+        for (var i = originalSize; i < size - 1; i++) {
+            array[i] = valueGenerator();
         }
 
         return array;
