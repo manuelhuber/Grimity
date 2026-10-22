@@ -63,9 +63,7 @@ public static class RectTransformUtils {
     }
 
     public static void NudgeInside(this RectTransform rectTransform, RectTransform container) {
-        var overflow = GetWorldSpaceOverflow(container, rectTransform);
-        var localOverflow = rectTransform.InverseTransformVector(overflow);
-        rectTransform.anchoredPosition += new Vector2(localOverflow.x, localOverflow.y);
+        rectTransform.position += (Vector3)GetWorldSpaceOverflow(container, rectTransform);
     }
 
     /// <summary>Camera to use for screen conversions of UI under this transform; null for overlay canvases.</summary>

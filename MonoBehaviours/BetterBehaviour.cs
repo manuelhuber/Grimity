@@ -7,7 +7,7 @@ public abstract class BetterBehaviour : MonoBehaviour {
     private readonly List<Action> _cleanup = new();
     private bool _destroyed;
 
-    protected virtual void OnDestroy() {
+    protected void OnDestroy() {
         Destroy();
     }
 
