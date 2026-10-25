@@ -5,5 +5,9 @@ public static class LocalizationExtensions {
     public static bool IsEmpty(this LocalizedString localizedString) {
         return localizedString == null || localizedString.IsEmpty;
     }
+
+    public static LocalizedString Copy(this LocalizedString localizedString) {
+        return new LocalizedString(localizedString.TableReference, localizedString.TableEntryReference);
+    }
 }
 }
