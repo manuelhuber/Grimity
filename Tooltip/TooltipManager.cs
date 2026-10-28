@@ -18,6 +18,10 @@ public class TooltipManager : MonoBehaviour {
     [SerializeField]
     private Sides mouseMargins;
 
+    [Tooltip("Canvas the cursor is drawn on; the mouse margins are in its units. Empty if it is the tooltips' canvas")]
+    [SerializeField]
+    private Canvas cursorCanvas;
+
     private TooltipView _activeTooltip;
     private PlacementConfig _config;
 
@@ -26,6 +30,7 @@ public class TooltipManager : MonoBehaviour {
 
     private Dictionary<Type, TooltipView> _prefabMap;
     private RectTransform _reference;
+    private Canvas _tooltipCanvas;
     private RectTransform _tooltipContainer;
 
     private bool IsTrackingMouse => !_reference;
@@ -33,6 +38,7 @@ public class TooltipManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         _tooltipContainer = TooltipContainer.GetComponent<RectTransform>();
+        _tooltipCanvas = _tooltipContainer.GetComponentInParent<Canvas>().rootCanvas;
         _prefabMap = prefabRegistry.ToDictionary(v => v.DataType, v => v);
     }
 
@@ -88,11 +94,12 @@ public class TooltipManager : MonoBehaviour {
 
     private Rect GetMouseRect() {
         var mouse = _tooltipContainer.ScreenToLocal(Mouse.current.position.ReadValue());
+        var tooltipUnitsPerCursorUnit = cursorCanvas ? cursorCanvas.scaleFactor / _tooltipCanvas.scaleFactor : 1;
         return Rect.MinMaxRect(
-            mouse.x - mouseMargins.Left,
-            mouse.y - mouseMargins.Bottom,
-            mouse.x + mouseMargins.Right,
-            mouse.y + mouseMargins.Top
+            mouse.x - mouseMargins.Left * tooltipUnitsPerCursorUnit,
+            mouse.y - mouseMargins.Bottom * tooltipUnitsPerCursorUnit,
+            mouse.x + mouseMargins.Right * tooltipUnitsPerCursorUnit,
+            mouse.y + mouseMargins.Top * tooltipUnitsPerCursorUnit
         );
     }
 }
