@@ -3,12 +3,12 @@ using System.Threading;
 
 namespace Grimity.String {
 public static class StringExtensions {
-    public static bool Falsy(this string s) {
+    public static bool IsFalsy(this string s) {
         return string.IsNullOrEmpty(s);
     }
 
-    public static bool Truthy(this string s) {
-        return !s.Falsy();
+    public static bool IsTruthy(this string s) {
+        return !s.IsFalsy();
     }
 
     public static string ToPascalCase(this string s) {
