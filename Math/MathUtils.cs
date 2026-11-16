@@ -36,5 +36,15 @@ public static class MathUtils {
     public static int MinMax(this int num, int min, int max) {
         return Mathf.Min(max, Mathf.Max(num, min));
     }
+
+    public static int GreatestCommonDivisor(int a, int b) {
+        a = Mathf.Abs(a);
+        b = Mathf.Abs(b);
+        while (b != 0) {
+            (a, b) = (b, a % b);
+        }
+
+        return a;
+    }
 }
 }

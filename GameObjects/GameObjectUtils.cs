@@ -18,6 +18,11 @@ public static class GameObjectUtils {
         gameObject.transform.ClearChildren();
     }
 
+    public static T GetOrAddComponent<T>(this Component component) where T : Component {
+        if (component.TryGetComponent<T>(out var existing)) return existing;
+        return component.gameObject.AddComponent<T>();
+    }
+
     public static bool ToggleActive(this GameObject gameObject) {
         gameObject.SetActive(!gameObject.activeSelf);
         return gameObject.activeSelf;
